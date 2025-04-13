@@ -12,7 +12,7 @@ import json
 import logging
 import datetime
 from pathlib import Path
-from typing import Optional, Dict, Any, Union
+from typing import Optional, Dict, Any, Union, List, Tuple
 
 
 class FormLogger:
@@ -61,8 +61,8 @@ class FormLogger:
         if self.logger.handlers:
             self.logger.handlers.clear()
         
-        # Create file handler
-        file_handler = logging.FileHandler(self.log_dir / "form_automation.log")
+        # Create file handler - Convert Path to string for broader compatibility
+        file_handler = logging.FileHandler(str(self.log_dir / "form_automation.log"))
         file_handler.setLevel(log_level)
         
         # Create formatter
@@ -80,7 +80,7 @@ class FormLogger:
             self.logger.addHandler(console_handler)
         
         # Dictionary to track field values for validation
-        self.field_values = {}
+        self.field_values: Dict[str, Any] = {}
         
         # Initialize session start
         self.logger.info(f"Started form automation session for {form_name}")
@@ -124,7 +124,7 @@ class FormLogger:
         # If there's a response text, save it to a file
         if response_text:
             response_file = self.log_dir / "form_response.txt"
-            with open(response_file, "w") as f:
+            with open(str(response_file), "w") as f:
                 f.write(response_text)
             self.logger.info(f"Response saved to {response_file}")
     
@@ -154,7 +154,7 @@ class FormLogger:
             f"Discrepancy in {field_name}: Expected '{expected_value}', got '{actual_value}'"
         )
     
-    async def save_screenshot(self, page, name: str = "screenshot") -> str:
+    async def save_screenshot(self, page: Any, name: str = "screenshot") -> str:
         """
         Capture and save a screenshot.
         
@@ -163,7 +163,7 @@ class FormLogger:
             name: Name for the screenshot file (without extension)
             
         Returns:
-            Path to the saved screenshot
+            Path to the saved screenshot as a string
         """
         timestamp = datetime.datetime.now().strftime("%H%M%S")
         filename = f"{name}_{timestamp}.png"
@@ -187,7 +187,7 @@ class FormLogger:
             self.logger.error(f"Failed to save screenshot: {str(e)}")
             return ""
     
-    async def save_html(self, page, name: str = "page_content") -> str:
+    async def save_html(self, page: Any, name: str = "page_content") -> str:
         """
         Save the HTML content of the page.
         
@@ -196,7 +196,7 @@ class FormLogger:
             name: Name for the HTML file (without extension)
             
         Returns:
-            Path to the saved HTML file
+            Path to the saved HTML file as a string
         """
         timestamp = datetime.datetime.now().strftime("%H%M%S")
         filename = f"{name}_{timestamp}.html"
@@ -206,12 +206,12 @@ class FormLogger:
             # For Playwright
             if hasattr(page, "content"):
                 html_content = await page.content()
-                with open(filepath, "w", encoding="utf-8") as f:
+                with open(str(filepath), "w", encoding="utf-8") as f:
                     f.write(html_content)
             # For CUA
             elif hasattr(page, "get_page_source"):
                 html_content = await page.get_page_source()
-                with open(filepath, "w", encoding="utf-8") as f:
+                with open(str(filepath), "w", encoding="utf-8") as f:
                     f.write(html_content)
             else:
                 self.logger.warning(f"Could not save HTML: Unsupported page object")
@@ -223,7 +223,7 @@ class FormLogger:
             self.logger.error(f"Failed to save HTML content: {str(e)}")
             return ""
     
-    def start_tracing(self, context) -> None:
+    def start_tracing(self, context: Any) -> None:
         """
         Start Playwright tracing.
         
@@ -231,7 +231,7 @@ class FormLogger:
             context: Playwright browser context
         """
         try:
-            trace_path = self.trace_dir / "trace.zip"
+            # Note: trace_path is defined here for clarity but used in stop_tracing
             if hasattr(context, "tracing"):
                 context.tracing.start(
                     screenshots=True,
@@ -244,7 +244,7 @@ class FormLogger:
         except Exception as e:
             self.logger.error(f"Failed to start tracing: {str(e)}")
     
-    def stop_tracing(self, context) -> None:
+    def stop_tracing(self, context: Any) -> None:
         """
         Stop Playwright tracing and save the trace file.
         
@@ -280,7 +280,7 @@ class FormLogger:
         
         # Save field values for reference
         values_file = self.log_dir / "field_values.json"
-        with open(values_file, "w") as f:
+        with open(str(values_file), "w") as f:
             json.dump(self.field_values, f, indent=2, default=str)
         
         self.logger.info(f"Field values saved to {values_file}")
