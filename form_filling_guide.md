@@ -108,32 +108,209 @@ This document outlines the strategy for implementing a browser agent that reliab
    - Measure overall form completion time
    - Record success rate across multiple attempts
 
-## Implementation Framework
+## Advanced Playwright Techniques
+
+### 1. Robust Element Selection
+
+```javascript
+// Prioritize selection by visible labels (most reliable)
+const titleField = page.getByLabel('Title');
+await titleField.selectOption('Prof');
+
+// Use text-based selection for buttons and elements without labels
+const nextButton = page.getByText('Next', { exact: true });
+await nextButton.click();
+
+// Use role-based selection for standard elements
+const submitButton = page.getByRole('button', { name: 'Submit' });
+await Promise.all([
+  page.waitForNavigation(), // Wait for navigation to complete
+  submitButton.click()      // Click the submit button
+]);
+
+// Fallback to CSS selectors when needed
+if (!(await page.getByLabel('Joint Insured').isVisible())) {
+  await page.locator('input[type="checkbox"][id*="joint"]').click();
+}
+```
+
+### 2. Form Interaction Best Practices
+
+```javascript
+// Wait for element to be both visible and enabled before interaction
+await page.getByLabel('First Name').waitFor({ state: 'visible', timeout: 5000 });
+await page.getByLabel('First Name').fill(data.firstName);
+
+// Clear input fields before filling them
+await page.getByLabel('Phone Number').fill('');
+await page.getByLabel('Phone Number').fill(data.phoneNumber);
+
+// Checkbox handling with verification
+await page.getByLabel('Joint Insured').setChecked(data.jointInsured);
+const isChecked = await page.getByLabel('Joint Insured').isChecked();
+console.log(`Joint Insured checkbox state: ${isChecked}`);
+
+// Dropdown selection with verification
+await page.getByLabel('Business Type').selectOption(data.business.type);
+const selectedValue = await page.getByLabel('Business Type').inputValue();
+console.log(`Selected business type: ${selectedValue}`);
+
+// Handling date fields (which may have special format requirements)
+await page.getByLabel('Date of Birth').fill(formatDate(data.dateOfBirth));
+```
+
+### 3. Handling Conditional Fields
+
+```javascript
+// Toggle a checkbox and wait for conditional field to appear
+await page.getByLabel('CCTV').setChecked(true);
+await page.waitForSelector('text=CCTV Type', { state: 'visible', timeout: 2000 });
+await page.getByLabel('CCTV Type').selectOption(data.security.cctvType);
+
+// Retry logic for conditional fields that may be slow to appear
+async function fillConditionalField(trigger, fieldLabel, value, maxRetries = 3) {
+  await trigger.setChecked(true);
+  
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      await page.getByLabel(fieldLabel).waitFor({ state: 'visible', timeout: 2000 });
+      await page.getByLabel(fieldLabel).fill(value);
+      return true;
+    } catch (error) {
+      console.log(`Retry ${i+1} for conditional field ${fieldLabel}`);
+      // Toggle the trigger off and on again to try to reveal the field
+      if (i < maxRetries - 1) {
+        await trigger.setChecked(false);
+        await page.waitForTimeout(500);
+        await trigger.setChecked(true);
+      }
+    }
+  }
+  
+  return false;
+}
+```
+
+### 4. Multi-Step Form Navigation
+
+```javascript
+// Safe navigation between form sections
+async function navigateToNextSection(page) {
+  try {
+    const nextButton = page.getByRole('button', { name: 'Next' });
+    await nextButton.waitFor({ state: 'visible', timeout: 2000 });
+    
+    // Wait for both the click and navigation to complete
+    await Promise.all([
+      page.waitForURL('**/next-section', { timeout: 5000 }).catch(() => {}),
+      nextButton.click()
+    ]);
+    
+    // Verify navigation success
+    await page.waitForTimeout(1000); // Allow time for new section to fully load
+    return true;
+  } catch (error) {
+    console.error('Navigation failed:', error);
+    return false;
+  }
+}
+```
+
+### 5. Error Handling with Retry Logic
+
+```javascript
+// Implement retry logic for form filling
+async function fillFieldWithRetry(page, fieldLabel, value, maxRetries = 3) {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const field = page.getByLabel(fieldLabel);
+      await field.waitFor({ state: 'visible', timeout: 2000 });
+      await field.fill(value);
+      
+      // Verify the value was properly entered
+      const enteredValue = await field.inputValue();
+      if (enteredValue === value) {
+        return true;
+      }
+      console.log(`Value verification failed for ${fieldLabel}, retrying...`);
+    } catch (error) {
+      console.log(`Attempt ${attempt+1} failed for ${fieldLabel}: ${error.message}`);
+      await page.waitForTimeout(500); // Brief pause before retry
+    }
+  }
+  console.error(`Failed to fill ${fieldLabel} after ${maxRetries} attempts`);
+  return false;
+}
+```
+
+## Updated Implementation Framework
 
 ```javascript
 async function fillForm(formUrl, formData) {
-  // 1. Initialize browser and navigate to form
-  const browser = await playwright.chromium.launch({ headless: false });
-  const page = await browser.newPage();
-  await page.goto(formUrl);
-
-  // 2. Determine form type and select strategy
-  const isHardForm = formUrl.includes('/form');
-  const isEasyForm = formUrl.includes('/form2');
-
-  if (isEasyForm) {
-    await fillEasyForm(page, formData);
-  } else if (isHardForm) {
-    await fillHardForm(page, formData);
-  }
-
-  // 3. Check result and return success/failure
-  const resultText = await page.textContent('.result-code');
-  await browser.close();
+  // 1. Initialize browser with improved settings
+  const browser = await playwright.chromium.launch({ 
+    headless: false,
+    slowMo: 50, // Slow down operations by 50ms for better stability
+  });
   
-  return {
-    success: resultText.includes('ASTEROID_1'),
-    result: resultText
-  };
+  const context = await browser.newContext({
+    viewport: { width: 1280, height: 1024 },
+    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36'
+  });
+  
+  const page = await context.newPage();
+  
+  // Setup event handlers for dialogs and console messages
+  page.on('dialog', async dialog => {
+    console.log(`Dialog message: ${dialog.message()}`);
+    await dialog.accept();
+  });
+  
+  page.on('console', msg => {
+    if (msg.type() === 'error') {
+      console.log(`Console error: ${msg.text()}`);
+    }
+  });
+  
+  try {
+    // 2. Navigate to form with timeout and waitUntil
+    await page.goto(formUrl, { 
+      waitUntil: 'networkidle',
+      timeout: 30000 
+    });
+    
+    // 3. Determine form type and select strategy
+    const isHardForm = formUrl.includes('/form') && !formUrl.includes('/form2');
+    const isEasyForm = formUrl.includes('/form2');
+
+    let result = false;
+    
+    if (isEasyForm) {
+      result = await fillEasyForm(page, formData);
+    } else if (isHardForm) {
+      result = await fillHardForm(page, formData);
+    }
+    
+    // 4. Check result and capture final state
+    await page.screenshot({ path: 'form-submission-result.png' });
+    const resultText = await page.textContent('.result-code');
+    
+    return {
+      success: resultText.includes('ASTEROID_1'),
+      result: resultText,
+      formType: isEasyForm ? 'easy' : 'hard',
+      timestamp: new Date().toISOString()
+    };
+    
+  } catch (error) {
+    console.error('Form submission failed:', error);
+    await page.screenshot({ path: 'form-error-state.png' });
+    return {
+      success: false,
+      error: error.message
+    };
+  } finally {
+    await browser.close();
+  }
 }
 ```
