@@ -6,11 +6,12 @@ This script demonstrates how to use the FormLogger utility in both scenarios.
 """
 
 import asyncio
+from typing import Any, Optional
 from playwright.async_api import async_playwright
 from utils.logger import FormLogger
 
 
-async def dom_based_example():
+async def dom_based_example() -> None:
     """Example of using FormLogger with a DOM-based approach using Playwright."""
     print("\n=== Running DOM-based example ===")
     
@@ -58,7 +59,7 @@ async def dom_based_example():
             await browser.close()
 
 
-async def cua_based_example():
+async def cua_based_example() -> None:
     """
     Example of using FormLogger with a CUA-based approach.
     
@@ -71,14 +72,14 @@ async def cua_based_example():
     
     # Simulate a CUA browser object
     class MockCUABrowser:
-        async def take_screenshot(self, output_path):
+        async def take_screenshot(self, output_path: str) -> str:
             print(f"CUA: Taking screenshot and saving to {output_path}")
             # In a real implementation, this would actually save a screenshot
-            with open(output_path, "w") as f:
+            with open(str(output_path), "w") as f:
                 f.write("<mock screenshot data>")
             return output_path
             
-        async def get_page_source(self):
+        async def get_page_source(self) -> str:
             return "<html><body><h1>Mock CUA Page</h1></body></html>"
     
     # Create mock CUA browser
@@ -106,7 +107,7 @@ async def cua_based_example():
         logger.log_session_summary(False)
 
 
-async def main():
+async def main() -> None:
     """Run both examples."""
     await dom_based_example()
     await cua_based_example()
