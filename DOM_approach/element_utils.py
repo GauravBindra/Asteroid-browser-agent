@@ -5,12 +5,15 @@ Element Utilities for Asteroid Form Challenge
 This module provides robust element finding and interaction utilities for form automation.
 It includes functions for locating elements using various strategies, interacting with
 different element types, and handling conditional fields.
+
+The module uses Playwright's asynchronous API consistently throughout to maintain
+compatibility with modern Playwright practices and avoid mixing sync/async approaches.
 """
 
 import time
 import logging
 from typing import Any, Dict, List, Optional, Tuple, Union
-from playwright.sync_api import Page, Locator, ElementHandle
+from playwright.async_api import Page, Locator, ElementHandle
 import config
 
 
@@ -24,10 +27,11 @@ class ElementInteractionError(Exception):
     pass
 
 
-def find_by_label(page: Page, label_text: str, exact: bool = False) -> Locator:
+async def find_by_label(page: Page, label_text: str, exact: bool = False) -> Locator:
     """
     Find an element by its associated label text.
-    This is the most reliable method for locating form elements.
+    This is the most reliable method for locating form elements as it matches
+    how users identify fields and is less brittle than selectors.
     
     Args:
         page: Playwright page object
@@ -43,13 +47,15 @@ def find_by_label(page: Page, label_text: str, exact: bool = False) -> Locator:
     try:
         # Most reliable: getByLabel which matches <label for="..."> or wrapping <label>
         locator = page.get_by_label(label_text, exact=exact)
-        if locator.count() > 0:
+        count = await locator.count()
+        if count > 0:
             return locator
         
         # Try more permissive search if exact matching fails
         if exact:
             locator = page.get_by_label(label_text, exact=False)
-            if locator.count() > 0:
+            count = await locator.count()
+            if count > 0:
                 return locator
                 
         # If still not found, raise exception
@@ -58,9 +64,11 @@ def find_by_label(page: Page, label_text: str, exact: bool = False) -> Locator:
         raise ElementNotFoundError(f"Error finding element with label '{label_text}': {str(e)}")
 
 
-def find_by_role(page: Page, role: str, name: Optional[str] = None) -> Locator:
+async def find_by_role(page: Page, role: str, name: Optional[str] = None) -> Locator:
     """
     Find an element by its ARIA role and optional accessible name.
+    This is particularly effective for semantic elements like buttons,
+    checkboxes, and other elements with well-defined roles.
     
     Args:
         page: Playwright page object
@@ -79,7 +87,8 @@ def find_by_role(page: Page, role: str, name: Optional[str] = None) -> Locator:
         else:
             locator = page.get_by_role(role)
             
-        if locator.count() > 0:
+        count = await locator.count()
+        if count > 0:
             return locator
             
         raise ElementNotFoundError(f"Element with role '{role}'{' and name ' + name if name else ''} not found")
@@ -87,9 +96,11 @@ def find_by_role(page: Page, role: str, name: Optional[str] = None) -> Locator:
         raise ElementNotFoundError(f"Error finding element with role '{role}': {str(e)}")
 
 
-def find_by_placeholder(page: Page, placeholder_text: str, exact: bool = False) -> Locator:
+async def find_by_placeholder(page: Page, placeholder_text: str, exact: bool = False) -> Locator:
     """
     Find an element by its placeholder text.
+    Useful for forms where inputs have distinctive placeholder text
+    that can serve as a reliable identifier.
     
     Args:
         page: Playwright page object
@@ -104,7 +115,8 @@ def find_by_placeholder(page: Page, placeholder_text: str, exact: bool = False) 
     """
     try:
         locator = page.get_by_placeholder(placeholder_text, exact=exact)
-        if locator.count() > 0:
+        count = await locator.count()
+        if count > 0:
             return locator
             
         raise ElementNotFoundError(f"Element with placeholder '{placeholder_text}' not found")
@@ -112,10 +124,11 @@ def find_by_placeholder(page: Page, placeholder_text: str, exact: bool = False) 
         raise ElementNotFoundError(f"Error finding element with placeholder '{placeholder_text}': {str(e)}")
 
 
-def find_by_text(page: Page, text: str, exact: bool = False) -> Locator:
+async def find_by_text(page: Page, text: str, exact: bool = False) -> Locator:
     """
     Find an element by its text content.
-    Useful for buttons and links without specific roles.
+    Useful for buttons and links without specific roles, especially
+    when the visible text is the most reliable way to identify an element.
     
     Args:
         page: Playwright page object
@@ -130,7 +143,8 @@ def find_by_text(page: Page, text: str, exact: bool = False) -> Locator:
     """
     try:
         locator = page.get_by_text(text, exact=exact)
-        if locator.count() > 0:
+        count = await locator.count()
+        if count > 0:
             return locator
             
         raise ElementNotFoundError(f"Element with text '{text}' not found")
@@ -138,9 +152,11 @@ def find_by_text(page: Page, text: str, exact: bool = False) -> Locator:
         raise ElementNotFoundError(f"Error finding element with text '{text}': {str(e)}")
 
 
-def find_by_test_id(page: Page, test_id: str) -> Locator:
+async def find_by_test_id(page: Page, test_id: str) -> Locator:
     """
     Find an element by its data-testid attribute.
+    This is useful when working with forms designed with automated testing
+    in mind, where data-testid attributes have been explicitly added.
     
     Args:
         page: Playwright page object
@@ -154,7 +170,8 @@ def find_by_test_id(page: Page, test_id: str) -> Locator:
     """
     try:
         locator = page.get_by_test_id(test_id)
-        if locator.count() > 0:
+        count = await locator.count()
+        if count > 0:
             return locator
             
         raise ElementNotFoundError(f"Element with test ID '{test_id}' not found")
@@ -162,10 +179,11 @@ def find_by_test_id(page: Page, test_id: str) -> Locator:
         raise ElementNotFoundError(f"Error finding element with test ID '{test_id}': {str(e)}")
 
 
-def find_by_selector(page: Page, selector: str) -> Locator:
+async def find_by_selector(page: Page, selector: str) -> Locator:
     """
     Find an element by CSS selector.
-    This is a fallback method when other methods fail.
+    This is a fallback method when other methods fail and should be used
+    with caution as CSS selectors can be brittle during site changes.
     
     Args:
         page: Playwright page object
@@ -179,7 +197,8 @@ def find_by_selector(page: Page, selector: str) -> Locator:
     """
     try:
         locator = page.locator(selector)
-        if locator.count() > 0:
+        count = await locator.count()
+        if count > 0:
             return locator
             
         raise ElementNotFoundError(f"Element with selector '{selector}' not found")
@@ -187,13 +206,21 @@ def find_by_selector(page: Page, selector: str) -> Locator:
         raise ElementNotFoundError(f"Error finding element with selector '{selector}': {str(e)}")
 
 
-def find_element_smart(
+async def find_element_smart(
     page: Page, 
     field_info: Dict[str, Any],
     logger: Optional[Any] = None
 ) -> Locator:
     """
     Smart element finder that tries multiple strategies to find an element.
+    
+    This function attempts multiple location strategies in a specific order of reliability:
+    1. Label-based - Most reliable as it matches what users see and how fields are typically identified
+    2. Role-based - Good for semantic elements like buttons with clear roles
+    3. Placeholder-based - Useful for inputs with distinctive placeholder text
+    4. CSS Selector - Used when more specific targeting is needed
+    5. ID-based - Direct but may be auto-generated or change between sessions
+    6. Name-based - Similar to ID but uses the name attribute
     
     Args:
         page: Playwright page object
@@ -208,61 +235,67 @@ def find_element_smart(
     """
     errors = []
     
-    # Try label-based search first (most reliable)
+    # 1. Try label-based search first (most reliable)
+    # This matches how users identify fields and is typically stable across changes
     if 'label' in field_info and field_info['label']:
         try:
-            locator = find_by_label(page, field_info['label'])
+            locator = await find_by_label(page, field_info['label'])
             if logger:
                 logger.info(f"Found element by label: {field_info['label']}")
             return locator
         except ElementNotFoundError as e:
             errors.append(str(e))
     
-    # Try role-based search
+    # 2. Try role-based search (good for semantic elements)
+    # Particularly effective for buttons, checkboxes, etc. with ARIA roles
     if 'role' in field_info and field_info['role']:
         try:
             name = field_info.get('name') if 'name' in field_info else None
-            locator = find_by_role(page, field_info['role'], name)
+            locator = await find_by_role(page, field_info['role'], name)
             if logger:
                 logger.info(f"Found element by role: {field_info['role']}")
             return locator
         except ElementNotFoundError as e:
             errors.append(str(e))
     
-    # Try placeholder-based search
+    # 3. Try placeholder-based search (useful for many inputs)
+    # Particularly helpful for forms where placeholders are distinct
     if 'placeholder' in field_info and field_info['placeholder'] and field_info['placeholder'] != 'none':
         try:
-            locator = find_by_placeholder(page, field_info['placeholder'])
+            locator = await find_by_placeholder(page, field_info['placeholder'])
             if logger:
                 logger.info(f"Found element by placeholder: {field_info['placeholder']}")
             return locator
         except ElementNotFoundError as e:
             errors.append(str(e))
     
-    # Try selector-based search as fallback
+    # 4. Try selector-based search (custom selectors for specific targeting)
+    # Used when we have a specific selector known to work
     if 'selector' in field_info and field_info['selector']:
         try:
-            locator = find_by_selector(page, field_info['selector'])
+            locator = await find_by_selector(page, field_info['selector'])
             if logger:
                 logger.info(f"Found element by selector: {field_info['selector']}")
             return locator
         except ElementNotFoundError as e:
             errors.append(str(e))
     
-    # If ID is available, try direct ID selector
+    # 5. If ID is available, try direct ID selector
+    # Less preferred because IDs might be auto-generated or change
     if 'id' in field_info and field_info['id'] and field_info['id'] != 'none':
         try:
-            locator = find_by_selector(page, f"#{field_info['id']}")
+            locator = await find_by_selector(page, f"#{field_info['id']}")
             if logger:
                 logger.info(f"Found element by ID: {field_info['id']}")
             return locator
         except ElementNotFoundError as e:
             errors.append(str(e))
     
-    # If name attribute is available, try name selector
+    # 6. If name attribute is available, try name selector
+    # Similar to ID but using the name attribute
     if 'name' in field_info and field_info['name'] and field_info['name'] != 'none':
         try:
-            locator = find_by_selector(page, f"[name='{field_info['name']}']")
+            locator = await find_by_selector(page, f"[name='{field_info['name']}']")
             if logger:
                 logger.info(f"Found element by name attribute: {field_info['name']}")
             return locator
@@ -656,3 +689,20 @@ async def detect_validation_errors(page: Page) -> List[Dict[str, str]]:
             continue
     
     return errors
+
+
+
+# This file:
+
+#   1. Builds on explore_forms.py techniques: Adapts and enhances the element finding logic from the exploration script
+#   2. Implements modern Playwright selectors: Uses get_by_label(), get_by_role(), and other modern locators
+#   3. Provides smart element finding: Tries multiple strategies to reliably locate elements
+#   4. Handles different input types: Supports text inputs, checkboxes, dropdowns, etc.
+#   5. Implements retry mechanisms: For robust interaction with elements
+#   6. Handles conditional fields: Special support for fields that appear conditionally
+#   7. Includes form structure detection: Functions to detect sections and validation errors
+#   8. Integrates with logger.py: Compatible with your existing logging system
+#   9. Uses config.py settings: For timeouts, retry counts, etc.
+
+#   The file provides a strong foundation for the form-filling agent, with functions that can handle both the easy and hard forms. The emphasis
+#   is on reliability and robustness, with multiple fallback strategies to ensure elements are found and interactions succeed.

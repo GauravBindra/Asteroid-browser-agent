@@ -107,3 +107,22 @@ def get_form_config(form_type: str) -> Dict[str, Any]:
         "demo_data_file": get_abs_path(DEMO_DATA_FILES[form_type]),
         "is_multi_section": form_type == "hard"
     }
+
+
+# This file provides:
+
+#   1. Form URLs and Data Files: Configuration for both easy and hard forms
+#   2. Browser Settings: Detailed Playwright browser configuration
+#   3. Timeouts: Various timeouts for different operations
+#   4. Retry Configuration: Settings for retry mechanisms
+#   5. Logging Configuration: Compatible with your existing logger.py
+#   6. Path Definitions: Organized file paths for outputs
+#   7. Field Type Mapping: Maps form field types to interaction methods
+#   8. Helper Functions: Utilities for path resolution and form-specific configs
+
+#   The configuration is designed to be:
+#   - Centralized: All settings in one place
+#   - Flexible: Easy to adjust parameters
+#   - Comprehensive: Covers all aspects of the automation
+#   - Compatible: Works with your logger.py module
+
