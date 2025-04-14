@@ -223,9 +223,9 @@ class FormLogger:
             self.logger.error(f"Failed to save HTML content: {str(e)}")
             return ""
     
-    def start_tracing(self, context: Any) -> None:
+    async def start_tracing(self, context: Any) -> None:
         """
-        Start Playwright tracing.
+        Start Playwright tracing for detailed action recording.
         
         Args:
             context: Playwright browser context
@@ -233,7 +233,7 @@ class FormLogger:
         try:
             # Note: trace_path is defined here for clarity but used in stop_tracing
             if hasattr(context, "tracing"):
-                context.tracing.start(
+                await context.tracing.start(
                     screenshots=True,
                     snapshots=True,
                     sources=True
@@ -244,7 +244,7 @@ class FormLogger:
         except Exception as e:
             self.logger.error(f"Failed to start tracing: {str(e)}")
     
-    def stop_tracing(self, context: Any) -> None:
+    async def stop_tracing(self, context: Any) -> None:
         """
         Stop Playwright tracing and save the trace file.
         
@@ -254,7 +254,7 @@ class FormLogger:
         try:
             trace_path = self.trace_dir / "trace.zip"
             if hasattr(context, "tracing"):
-                context.tracing.stop(path=str(trace_path))
+                await context.tracing.stop(path=str(trace_path))
                 self.logger.info(f"Saved Playwright trace to {trace_path}")
             else:
                 self.logger.warning("Tracing not supported for this browser context")
@@ -298,7 +298,7 @@ async def run_form_automation():
         context = await browser.new_context()
         
         # Start tracing
-        logger.start_tracing(context)
+        await logger.start_tracing(context)
         
         page = await context.new_page()
         await page.goto("https://asteroid.ai/form2")
@@ -325,7 +325,7 @@ async def run_form_automation():
             logger.log_session_summary(False)
         
         # Stop tracing
-        logger.stop_tracing(context)
+        await logger.stop_tracing(context)
         
         await browser.close()
 """

@@ -1,0 +1,10 @@
+{
+  "firstName": "John",
+  "lastName": "Smith",
+  "dateOfBirth": "15-06-1985",
+  "email": "john.smith@example.com",
+  "phoneNumber": "07700900123",
+  "hasInsurance": true,
+  "wantsNewsletter": false,
+  "agreeToTerms": true
+}

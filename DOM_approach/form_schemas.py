@@ -15,59 +15,66 @@ EASY_FORM_SCHEMA = {
         "type": "text",
         "label": "First Name",
         "required": True,
-        "data_path": "firstName"
+        "data_path": "firstName",
+        "selector": "label:has-text('First Name') + input, label:has-text('First Name') ~ input"
     },
     "lastName": {
         "type": "text",
         "label": "Last Name",
         "required": True,
-        "data_path": "lastName"
+        "data_path": "lastName",
+        "selector": "label:has-text('Last Name') + input, label:has-text('Last Name') ~ input"
     },
     "dateOfBirth": {
         "type": "text",  # Using text instead of date for custom format
         "label": "Date of Birth (dd-mm-yyyy)",
         "placeholder": "dd-mm-yyyy",
         "required": True,
-        "data_path": "dateOfBirth"
+        "data_path": "dateOfBirth",
+        "selector": "input[placeholder='dd-mm-yyyy']"
     },
     "email": {
         "type": "email",
         "label": "Email",
         "required": True,
-        "data_path": "email"
+        "data_path": "email",
+        "selector": "label:has-text('Email') + input, label:has-text('Email') ~ input, input[type='email']"
     },
     "phoneNumber": {
         "type": "tel",
         "label": "Phone Number",
         "required": True,
-        "data_path": "phoneNumber"
+        "data_path": "phoneNumber",
+        "selector": "label:has-text('Phone Number') + input, label:has-text('Phone Number') ~ input, input[type='tel']"
     },
     "hasInsurance": {
         "type": "checkbox",
         "label": "Do you currently have insurance?",
         "input_id": "hasInsurance",
         "required": False,
-        "data_path": "hasInsurance"
+        "data_path": "hasInsurance",
+        "selector": "#hasInsurance, input[id='hasInsurance']"
     },
     "wantsNewsletter": {
         "type": "checkbox",
         "label": "Would you like to receive our newsletter?",
         "input_id": "wantsNewsletter",
         "required": False,
-        "data_path": "wantsNewsletter"
+        "data_path": "wantsNewsletter",
+        "selector": "#wantsNewsletter, input[id='wantsNewsletter']"
     },
     "agreeToTerms": {
         "type": "checkbox",
         "label": "I agree to the terms and conditions",
         "input_id": "agreeToTerms",
         "required": True,
-        "data_path": "agreeToTerms"
+        "data_path": "agreeToTerms",
+        "selector": "#agreeToTerms, input[id='agreeToTerms']"
     },
     "submitButton": {
         "type": "button",
-        "role": "button",
-        "input_type": "submit",
-        "selector": "button[type='submit']"
+        "label": "Review",
+        "selector": "button[type='submit'], input[type='submit'], button:has-text('Review')"
     }
 }
 
@@ -669,9 +676,8 @@ COVERAGE_OPTIONS_SCHEMA = {
     # Submit Button
     "submitButton": {
         "type": "button",
-        "role": "button",
-        "input_type": "submit",
-        "selector": "button[type='submit']"
+        "label": "Submit",
+        "selector": "button[type='submit'], input[type='submit'], button:has-text('Submit'), button:has-text('submit')"
     }
 }
 

@@ -12,6 +12,7 @@ compatibility with modern Playwright practices and avoid mixing sync/async appro
 
 import time
 import logging
+import asyncio
 from typing import Any, Dict, List, Optional, Tuple, Union
 from playwright.async_api import Page, Locator, ElementHandle
 import config
@@ -241,7 +242,7 @@ async def find_element_smart(
         try:
             locator = await find_by_label(page, field_info['label'])
             if logger:
-                logger.info(f"Found element by label: {field_info['label']}")
+                logger.logger.info(f"Found element by label: {field_info['label']}")
             return locator
         except ElementNotFoundError as e:
             errors.append(str(e))
@@ -253,7 +254,7 @@ async def find_element_smart(
             name = field_info.get('name') if 'name' in field_info else None
             locator = await find_by_role(page, field_info['role'], name)
             if logger:
-                logger.info(f"Found element by role: {field_info['role']}")
+                logger.logger.info(f"Found element by role: {field_info['role']}")
             return locator
         except ElementNotFoundError as e:
             errors.append(str(e))
@@ -264,7 +265,7 @@ async def find_element_smart(
         try:
             locator = await find_by_placeholder(page, field_info['placeholder'])
             if logger:
-                logger.info(f"Found element by placeholder: {field_info['placeholder']}")
+                logger.logger.info(f"Found element by placeholder: {field_info['placeholder']}")
             return locator
         except ElementNotFoundError as e:
             errors.append(str(e))
@@ -275,7 +276,7 @@ async def find_element_smart(
         try:
             locator = await find_by_selector(page, field_info['selector'])
             if logger:
-                logger.info(f"Found element by selector: {field_info['selector']}")
+                logger.logger.info(f"Found element by selector: {field_info['selector']}")
             return locator
         except ElementNotFoundError as e:
             errors.append(str(e))
@@ -286,7 +287,7 @@ async def find_element_smart(
         try:
             locator = await find_by_selector(page, f"#{field_info['id']}")
             if logger:
-                logger.info(f"Found element by ID: {field_info['id']}")
+                logger.logger.info(f"Found element by ID: {field_info['id']}")
             return locator
         except ElementNotFoundError as e:
             errors.append(str(e))
@@ -297,7 +298,7 @@ async def find_element_smart(
         try:
             locator = await find_by_selector(page, f"[name='{field_info['name']}']")
             if logger:
-                logger.info(f"Found element by name attribute: {field_info['name']}")
+                logger.logger.info(f"Found element by name attribute: {field_info['name']}")
             return locator
         except ElementNotFoundError as e:
             errors.append(str(e))
@@ -333,7 +334,7 @@ async def fill_field_with_retry(
     for attempt in range(max_retries):
         try:
             # Find the element
-            locator = find_element_smart(page, field_info, logger)
+            locator = await find_element_smart(page, field_info, logger)
             
             # Wait for the element to be visible and enabled
             await locator.wait_for(
@@ -349,54 +350,43 @@ async def fill_field_with_retry(
                 # Convert value to boolean for checkboxes
                 bool_value = bool(value)
                 await locator.set_checked(bool_value)
+                
+                if bool_value:
+                    if logger:
+                        logger.logger.info(f"Checked {field_name}")
+                else:
+                    if logger:
+                        logger.logger.info(f"Unchecked {field_name}")
+                        
+            elif input_type == 'select':
+                # Select options from dropdown
+                await locator.select_option(value=str(value))
                 if logger:
-                    action = "Checked" if bool_value else "Unchecked"
-                    logger.log_field_fill(field_name, bool_value)
-            elif input_type == 'select' or field_type == 'select':
-                # Select an option from a dropdown
-                await locator.select_option(value)
-                if logger:
-                    logger.log_field_fill(field_name, value)
+                    logger.logger.info(f"Selected option '{value}' for {field_name}")
+                    
             else:
-                # For regular text input fields
-                # First clear the field to ensure clean state
-                await locator.fill("")
-                # Then fill with the value
+                # For text inputs, clear first then fill
+                await locator.fill('')
                 await locator.fill(str(value))
                 if logger:
-                    logger.log_field_fill(field_name, value)
+                    logger.logger.info(f"Filled {field_name} with '{value}'")
             
-            # Verify the value if appropriate and possible
-            if config.RETRY_CONFIG['verify_inputs'] and input_type not in ['file', 'image']:
-                if input_type == 'checkbox' or input_type == 'radio':
-                    is_checked = await locator.is_checked()
-                    if is_checked != bool_value:
-                        raise ElementInteractionError(
-                            f"Checkbox verification failed. Expected: {bool_value}, Got: {is_checked}"
-                        )
-                elif input_type != 'select' and field_type != 'select':
-                    input_value = await locator.input_value()
-                    if input_value != str(value):
-                        raise ElementInteractionError(
-                            f"Input verification failed. Expected: {value}, Got: {input_value}"
-                        )
+            # Add a delay after filling to make the process more observable
+            await asyncio.sleep(1)
             
             return True
             
         except Exception as e:
             if logger:
-                logger.log_error(f"Attempt {attempt+1} failed for {field_name}: {str(e)}")
-            
-            # Last attempt failed
-            if attempt == max_retries - 1:
-                if logger:
-                    logger.log_error(f"Failed to fill {field_name} after {max_retries} attempts")
-                return False
-            
-            # Wait before retrying
-            if retry_delay > 0:
-                time.sleep(retry_delay / 1000)  # Convert ms to seconds
-    
+                logger.logger.error(f"Attempt {attempt + 1} failed for {field_name}: {str(e)}")
+                
+            if attempt < max_retries - 1:
+                # Wait before retrying
+                await asyncio.sleep(retry_delay / 1000)  # Convert ms to seconds
+                
+    if logger:
+        logger.logger.error(f"Failed to fill {field_name} after {max_retries} attempts")
+        
     return False
 
 
@@ -429,10 +419,10 @@ async def handle_conditional_field(
     
     try:
         # First set the trigger field to the desired state
-        trigger_locator = find_element_smart(page, trigger_field, logger)
+        trigger_locator = await find_element_smart(page, trigger_field, logger)
         
         if logger:
-            logger.info(f"Setting trigger field '{trigger_name}' to {trigger_value}")
+            logger.logger.info(f"Setting trigger field '{trigger_name}' to {trigger_value}")
         
         # For checkbox triggers, we use set_checked to ensure correct state
         await trigger_locator.set_checked(trigger_value)

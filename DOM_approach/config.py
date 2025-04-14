@@ -27,7 +27,7 @@ DEMO_DATA_FILES = {
 BROWSER_CONFIG = {
     "browser_type": "chromium",      # Options: chromium, firefox, webkit
     "headless": False,               # Set to True for production/CI environments
-    "slow_mo": 50,                   # Slow down operations by 50ms for stability/visibility
+    "slow_mo": 500,                  # Slow down operations by 500ms for better visibility
     "viewport_width": 1280,
     "viewport_height": 1024,
     "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
@@ -125,4 +125,3 @@ def get_form_config(form_type: str) -> Dict[str, Any]:
 #   - Flexible: Easy to adjust parameters
 #   - Comprehensive: Covers all aspects of the automation
 #   - Compatible: Works with your logger.py module
-

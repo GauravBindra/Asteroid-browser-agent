@@ -150,9 +150,9 @@ async def run_automation(args: argparse.Namespace, logger: FormLogger) -> Dict[s
         # Process data file path
         try:
             data_file = process_data_file_path(args.data)
-            logger.info(f"Using data from: {data_file}")
+            logger.logger.info(f"Using data from: {data_file}")
         except FileNotFoundError as e:
-            logger.log_error(str(e))
+            logger.logger.error(str(e))
             return {
                 "success": False,
                 "message": str(e),
@@ -163,21 +163,20 @@ async def run_automation(args: argparse.Namespace, logger: FormLogger) -> Dict[s
         result = await automate_form(
             form_type=args.form,
             data_file=data_file,
-            headless=args.headless,
-            browser_type=args.browser
+            headless=args.headless
         )
         
         # Log the result
         if result["success"]:
-            logger.info(f"Form automation successful: {result['result_code']}")
+            logger.logger.info(f"Form automation successful: {result['result_code']}")
         else:
-            logger.log_error(f"Form automation failed: {result['message']}")
+            logger.logger.error(f"Form automation failed: {result['message']}")
         
         return result
         
     except Exception as e:
         error_msg = f"Error running automation: {str(e)}"
-        logger.log_error(error_msg)
+        logger.logger.error(error_msg)
         
         return {
             "success": False,
@@ -253,8 +252,8 @@ async def main() -> None:
         enable_console_output=config.LOGGING_CONFIG["enable_console_output"]
     )
     
-    logger.info(f"Starting form automation for {args.form} form")
-    logger.info(f"Browser: {args.browser} (headless: {args.headless})")
+    logger.logger.info(f"Starting form automation for {args.form} form")
+    logger.logger.info(f"Browser: {args.browser} (headless: {args.headless})")
     
     # Display startup information
     print(f"Starting form automation for {args.form} form...")
