@@ -10,7 +10,8 @@ Following our step-by-step implementation plan, this version includes:
 1. Basic skeleton
 2. select_dropdown_option() function
 3. fill_date_field() function
-4. navigate_to_tab() function (new in v4)
+4. navigate_to_tab() function (from v4)
+5. click_next_button() function (new in v5)
 """
 
 import logging
@@ -119,7 +120,7 @@ def fill_date_field(nova, label, value):
             
         return False
 
-# New navigation function for multi-section hard form
+# Navigation functions for multi-section hard form
 
 def navigate_to_tab(nova, tab_name):
     """
@@ -127,7 +128,9 @@ def navigate_to_tab(nova, tab_name):
     
     Args:
         nova: NovaAct instance
-        tab_name: Name of the tab to navigate to (e.g., "Contact Details", "Business Info")
+        tab_name: Name of the tab to navigate to 
+                 (Options: "Contact Details", "Business Info", "Premises Details",
+                  "Security & Safety", "Coverage Options")
         
     Returns:
         bool: True if successful
@@ -136,14 +139,11 @@ def navigate_to_tab(nova, tab_name):
     logger.info(f"Navigating to tab: '{tab_name}'")
     
     try:
-        # Ensure we can see the tab navigation by scrolling to the top first
-        # Combined with the tab click in a single command for efficiency
+        # Using the improved command that worked in testing
         command = (
             f"Check if the all the form sections/tabs are visible. "
-            f"If you can't see the sections/tabs then Scroll to the top of the page "
-            f"to see all the form sections/tabs. If you still can't see the sections/tabs "
-            f"then try scrolling to the bottom of the page to see all the form sections/tabs. "
-            f"Then find and click on the tab or section labeled '{tab_name}'. "
+            f"If you cant see the sections/tabs then Scroll to the top of the page to see all the form sections/tabs. "
+            f"Find and click on the tab or section labeled '{tab_name}'. "
             f"Wait for the section to fully load."
         )
         nova.act(command)
@@ -176,7 +176,60 @@ def navigate_to_tab(nova, tab_name):
             logger.exception(f"Fallback navigation also failed: {fallback_error}")
             return False
 
-# Placeholder for click_next_button will be implemented next
+def click_next_button(nova):
+    """
+    Click the Next button to proceed to the next section of the form.
+    
+    Args:
+        nova: NovaAct instance
+        
+    Returns:
+        bool: True if successful
+    """
+    logger = logging.getLogger("nova_form_automation")
+    logger.info("Clicking Next button to proceed to next section")
+    
+    try:
+        # First scroll to the bottom of the current section to ensure the Next button is visible
+        command = (
+            "Check if you can see the 'Next' button at the bottom of the current form section. "
+            "If not, scroll down until you can see it. "
+            "Then click the blue 'Next' button to proceed to the next section. "
+            "Wait for the next section to fully load before proceeding."
+        )
+        nova.act(command)
+        
+        # Brief pause to allow for page transition
+        time.sleep(2)
+        
+        logger.info("Successfully clicked Next button")
+        return True
+        
+    except Exception as e:
+        logger.exception(f"Error clicking Next button: {e}")
+        
+        # Fallback approach if the primary method fails
+        try:
+            logger.info("Trying fallback approach for clicking Next button")
+            
+            # More specific instructions for finding the Next button
+            fallback_command = (
+                "Scroll all the way to the bottom of the current form section. "
+                "Look for a blue button that says 'Next' and click it. "
+                "If you can't find a 'Next' button, try looking for any navigation button "
+                "that would proceed to the next section of the form."
+            )
+            nova.act(fallback_command)
+            
+            # Additional wait after fallback
+            time.sleep(2)
+            
+            logger.info("Fallback click Next button completed")
+            return True
+            
+        except Exception as fallback_error:
+            logger.exception(f"Fallback Next button click also failed: {fallback_error}")
+            return False
 
 # Placeholder for automate_hard_form function - will be expanded later
 

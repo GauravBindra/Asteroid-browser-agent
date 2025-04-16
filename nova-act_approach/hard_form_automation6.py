@@ -10,7 +10,9 @@ Following our step-by-step implementation plan, this version includes:
 1. Basic skeleton
 2. select_dropdown_option() function
 3. fill_date_field() function
-4. navigate_to_tab() function (new in v4)
+4. navigate_to_tab() function
+5. click_next_button() function
+6. fill_contact_details() function (new in v6)
 """
 
 import logging
@@ -119,7 +121,7 @@ def fill_date_field(nova, label, value):
             
         return False
 
-# New navigation function for multi-section hard form
+# Navigation functions for multi-section hard form
 
 def navigate_to_tab(nova, tab_name):
     """
@@ -127,7 +129,9 @@ def navigate_to_tab(nova, tab_name):
     
     Args:
         nova: NovaAct instance
-        tab_name: Name of the tab to navigate to (e.g., "Contact Details", "Business Info")
+        tab_name: Name of the tab to navigate to 
+                 (Options: "Contact Details", "Business Info", "Premises Details",
+                  "Security & Safety", "Coverage Options")
         
     Returns:
         bool: True if successful
@@ -136,14 +140,11 @@ def navigate_to_tab(nova, tab_name):
     logger.info(f"Navigating to tab: '{tab_name}'")
     
     try:
-        # Ensure we can see the tab navigation by scrolling to the top first
-        # Combined with the tab click in a single command for efficiency
+        # Using the improved command that worked in testing
         command = (
             f"Check if the all the form sections/tabs are visible. "
-            f"If you can't see the sections/tabs then Scroll to the top of the page "
-            f"to see all the form sections/tabs. If you still can't see the sections/tabs "
-            f"then try scrolling to the bottom of the page to see all the form sections/tabs. "
-            f"Then find and click on the tab or section labeled '{tab_name}'. "
+            f"If you cant see the sections/tabs then Scroll to the top of the page to see all the form sections/tabs. "
+            f"Find and click on the tab or section labeled '{tab_name}'. "
             f"Wait for the section to fully load."
         )
         nova.act(command)
@@ -176,7 +177,132 @@ def navigate_to_tab(nova, tab_name):
             logger.exception(f"Fallback navigation also failed: {fallback_error}")
             return False
 
-# Placeholder for click_next_button will be implemented next
+def click_next_button(nova):
+    """
+    Click the Next button to proceed to the next section of the form.
+    
+    Args:
+        nova: NovaAct instance
+        
+    Returns:
+        bool: True if successful
+    """
+    logger = logging.getLogger("nova_form_automation")
+    logger.info("Clicking Next button to proceed to next section")
+    
+    try:
+        # First scroll to the bottom of the current section to ensure the Next button is visible
+        command = (
+            "Check if you can see the 'Next' button at the bottom of the current form section. "
+            "If not, scroll down until you can see it. "
+            "Then click the blue 'Next' button to proceed to the next section. "
+            "Wait for the next section to fully load before proceeding."
+        )
+        nova.act(command)
+        
+        # Brief pause to allow for page transition
+        time.sleep(2)
+        
+        logger.info("Successfully clicked Next button")
+        return True
+        
+    except Exception as e:
+        logger.exception(f"Error clicking Next button: {e}")
+        
+        # Fallback approach if the primary method fails
+        try:
+            logger.info("Trying fallback approach for clicking Next button")
+            
+            # More specific instructions for finding the Next button
+            fallback_command = (
+                "Scroll all the way to the bottom of the current form section. "
+                "Look for a blue button that says 'Next' and click it. "
+                "If you can't find a 'Next' button, try looking for any navigation button "
+                "that would proceed to the next section of the form."
+            )
+            nova.act(fallback_command)
+            
+            # Additional wait after fallback
+            time.sleep(2)
+            
+            logger.info("Fallback click Next button completed")
+            return True
+            
+        except Exception as fallback_error:
+            logger.exception(f"Fallback Next button click also failed: {fallback_error}")
+            return False
+
+# Section handler functions - implemented according to our step-by-step plan
+
+def fill_contact_details(nova, contact_data):
+    """
+    Fill the Contact Details section of the hard form.
+    
+    Args:
+        nova: NovaAct instance
+        contact_data: Dictionary containing contact section data
+        
+    Returns:
+        bool: True if successful and proceeded to next section
+    """
+    logger = logging.getLogger("nova_form_automation")
+    logger.info("Filling Contact Details section")
+    
+    try:
+        # Ensure we're on the Contact Details tab
+        navigate_to_tab(nova, "Contact Details")
+        
+        # Fill in the title field (dropdown)
+        if "title" in contact_data:
+            if not select_dropdown_option(nova, "Title", contact_data["title"]):
+                logger.warning("Failed to select title")
+        
+        # Fill in first name (text field)
+        if "firstName" in contact_data:
+            if not fill_text_field(nova, "First Name", contact_data["firstName"]):
+                logger.warning("Failed to fill first name")
+        
+        # Fill in last name (text field)
+        if "lastName" in contact_data:
+            if not fill_text_field(nova, "Last Name", contact_data["lastName"]):
+                logger.warning("Failed to fill last name")
+        
+        # Fill in date of birth (date field)
+        if "dateOfBirth" in contact_data:
+            if not fill_date_field(nova, "Date of Birth", contact_data["dateOfBirth"]):
+                logger.warning("Failed to fill date of birth")
+        
+        # Fill in phone number (text field)
+        if "phoneNumber" in contact_data:
+            if not fill_text_field(nova, "Phone Number", contact_data["phoneNumber"]):
+                logger.warning("Failed to fill phone number")
+        
+        # Handle joint insured checkbox
+        if "jointInsured" in contact_data:
+            if not handle_checkbox(nova, "Joint Insured", contact_data["jointInsured"]):
+                logger.warning("Failed to handle joint insured checkbox")
+            
+            # Fill in joint insured name if the checkbox is checked
+            if contact_data["jointInsured"] and "jointInsuredPersonName" in contact_data:
+                if not fill_text_field(nova, "Joint Insured Person Name", contact_data["jointInsuredPersonName"]):
+                    logger.warning("Failed to fill joint insured person name")
+        
+        # Fill in number of years as landlord (text field)
+        if "numberOfYearsAsLandlord" in contact_data:
+            if not fill_text_field(nova, "Number of Years as Landlord", str(contact_data["numberOfYearsAsLandlord"])):
+                logger.warning("Failed to fill number of years as landlord")
+        
+        # Click Next to proceed to the next section
+        if not click_next_button(nova):
+            logger.error("Failed to click Next button after filling Contact Details")
+            return False
+        
+        logger.info("Successfully completed Contact Details section and moved to next section")
+        return True
+        
+    except Exception as e:
+        logger.exception(f"Error filling Contact Details section: {e}")
+        return False
 
 # Placeholder for automate_hard_form function - will be expanded later
 

@@ -1,6 +1,37 @@
 # Nova-ACT Best Practices
 
-Based on the official Nova-ACT GitHub examples and our experiences with form automation, here are best practices for using Nova-ACT effectively.
+Based on the official Nova-ACT GitHub README, examples, and our experiences with form automation, here are comprehensive best practices for using Nova-ACT effectively.
+
+## Official Prompting Guidelines
+
+### 1. Be Prescriptive and Succinct
+
+❌ DON'T use vague, high-level descriptions:
+```python
+nova.act("Let's see what routes VTA offers")
+nova.act("I want to go and meet a friend. I should figure out when the Orange Line comes next.")
+```
+
+✅ DO use clear, actionable instructions:
+```python
+nova.act("Navigate to the routes tab")
+nova.act(f"Find the next departure time for the Orange Line from Government Center after {time}")
+```
+
+### 2. Break Large Tasks into Smaller Steps
+
+❌ DON'T try to accomplish too much in one command:
+```python
+nova.act("book me a hotel that costs less than $100 with the highest star rating")
+```
+
+✅ DO break the process into sequential steps:
+```python
+nova.act(f"search for hotels in Houston between {startdate} and {enddate}")
+nova.act("sort by avg customer review")
+nova.act("hit book on the first hotel that is $100 or less")
+nova.act(f"fill in my name, address, and DOB according to {blob}")
+```
 
 ## Command Structure Patterns
 
@@ -72,6 +103,24 @@ time.sleep(2)  # Wait for page transition
 nova.act("Find the dropdown labeled 'Title', clear it, and type 'Prof'")
 ```
 
+### Special Handling Techniques
+
+#### 1. Form Submission & Search
+For search operations or form submissions, explicitly tell the agent to press Enter:
+```python
+nova.act("search for cats. type enter to initiate the search.")
+```
+
+#### 2. Date Selection
+Always use absolute dates rather than relative ones:
+```python
+# Good
+nova.act("select dates march 23 to march 28")
+
+# Avoid
+nova.act("select dates for next weekend")
+```
+
 ## Error Handling
 
 ### Robust Recovery
@@ -85,6 +134,17 @@ except Exception:
     # Fallback approach
     nova.act("Find the date picker icon and click it")
     nova.act("Select June 15, 1985 from the calendar")
+```
+
+### Conditional Verification
+Check for completion or specific states using schemas:
+
+```python
+from nova_act import BOOL_SCHEMA
+
+result = nova.act("Is there a captcha on the screen?", schema=BOOL_SCHEMA)
+if result.matches_schema and result.parsed_response:
+    input("Please solve the captcha and hit return when done")
 ```
 
 ### Clear Instructions
@@ -119,6 +179,23 @@ nova.act("Find the form section labeled 'Contact Details'. "
    - The Tab key can cause field values to be reset in some forms
    - Use clicks outside the field instead to move focus
 
+5. **Navigation Complexity**
+   - Multi-section forms require clear navigation instructions
+   - Use conditional checks: "Check if you can see X, if not then scroll to find it"
+   - For navigation between tabs/sections, be very specific about location
+
+6. **Empty Section Detection**
+   - The agent may not realize it successfully navigated if content is empty
+   - Include expectations about what might be visible after navigation
+   - Handle cases where UI might be in a loading state
+
+## Known Limitations from Official Documentation
+
+1. Nova-ACT is unreliable with high-level prompts
+2. Cannot interact with elements hidden behind mouseover/hover states
+3. Cannot interact with browser window itself (browser modals)
+4. Will not solve CAPTCHAs (requires user intervention)
+
 ## Recommended Implementation Approach
 
 Based on these learnings, an optimized approach for form automation would be:
@@ -126,7 +203,7 @@ Based on these learnings, an optimized approach for form automation would be:
 ```python
 def select_dropdown_option(nova, label, value):
     """Optimized dropdown selection."""
-    # Single command approach
+    # Single command approach with clear, specific instructions
     nova.act(f"Find the dropdown field labeled '{label}', clear it, and type '{value}'. "
              f"Then click somewhere else on the page to confirm.")
     return True
@@ -140,6 +217,14 @@ def fill_date_field(nova, label, value):
     # Single command approach with format specifics
     nova.act(f"Find the date field labeled '{label}', clear it, and type '{formatted_date}' "
              f"(day/month/year format). Then click somewhere else to confirm.")
+    return True
+
+def navigate_to_tab(nova, tab_name):
+    """Optimized tab navigation."""
+    # Use conditional instructions
+    nova.act(f"Check if you can see the tab labeled '{tab_name}' at the top of the form. "
+             f"If not, scroll to the top of the page first. Then click on the tab labeled '{tab_name}'. "
+             f"Wait for the section to load completely.")
     return True
 ```
 
