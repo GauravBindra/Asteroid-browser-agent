@@ -12,7 +12,7 @@ Following our step-by-step implementation plan, this version includes:
 3. fill_date_field() function
 4. navigate_to_tab() function
 5. click_next_button() function
-6. fill_contact_details() function (new in v6)
+6. fill_contact_details() function (improved in v7)
 """
 
 import logging
@@ -123,7 +123,7 @@ def fill_date_field(nova, label, value):
 
 # Navigation functions for multi-section hard form
 
-def navigate_to_tab(nova, tab_name):
+def navigate_to_tab(nova, tab_name, check_current=True):
     """
     Navigate directly to a specific tab/section in the hard form.
     
@@ -132,12 +132,29 @@ def navigate_to_tab(nova, tab_name):
         tab_name: Name of the tab to navigate to 
                  (Options: "Contact Details", "Business Info", "Premises Details",
                   "Security & Safety", "Coverage Options")
+        check_current: Whether to check if we're already on the requested tab
         
     Returns:
         bool: True if successful
     """
     logger = logging.getLogger("nova_form_automation")
     logger.info(f"Navigating to tab: '{tab_name}'")
+    
+    # If check_current is enabled, first check if we're already on this tab
+    if check_current:
+        try:
+            from nova_act import BOOL_SCHEMA
+            
+            check_command = f"Am I already on the '{tab_name}' section of the form? Answer true or false."
+            result = nova.act(check_command, schema=BOOL_SCHEMA)
+            
+            if result.matches_schema and result.parsed_response:
+                logger.info(f"Already on the '{tab_name}' tab, no navigation needed")
+                return True
+                
+        except Exception as check_e:
+            logger.warning(f"Error checking current tab: {check_e}, proceeding with navigation")
+            # Continue with normal navigation
     
     try:
         # Using the improved command that worked in testing
@@ -234,13 +251,14 @@ def click_next_button(nova):
 
 # Section handler functions - implemented according to our step-by-step plan
 
-def fill_contact_details(nova, contact_data):
+def fill_contact_details(nova, contact_data, force_navigation=False):
     """
     Fill the Contact Details section of the hard form.
     
     Args:
         nova: NovaAct instance
         contact_data: Dictionary containing contact section data
+        force_navigation: Force navigation to Contact Details tab even if not needed
         
     Returns:
         bool: True if successful and proceeded to next section
@@ -249,9 +267,11 @@ def fill_contact_details(nova, contact_data):
     logger.info("Filling Contact Details section")
     
     try:
-        # Skip navigation for Contact Details since the form opens on this tab by default
-        # Only uncomment the line below if we're coming from another section
-        # navigate_to_tab(nova, "Contact Details")
+        # The form opens on Contact Details by default, so only navigate if forced
+        # or if we're coming back to this section from elsewhere
+        if force_navigation:
+            if not navigate_to_tab(nova, "Contact Details"):
+                logger.warning("Failed to navigate to Contact Details tab")
         
         # Fill in the title field (dropdown)
         if "title" in contact_data:

@@ -8,11 +8,11 @@ handlers for the multi-section hard form with optimized performance.
 
 Following our step-by-step implementation plan, this version includes:
 1. Basic skeleton
-2. select_dropdown_option() function
-3. fill_date_field() function
-4. navigate_to_tab() function
+2. select_dropdown_option() function (simplified in v8)
+3. fill_date_field() function (simplified in v8)
+4. navigate_to_tab() function 
 5. click_next_button() function
-6. fill_contact_details() function (new in v6)
+6. fill_contact_details() function
 """
 
 import logging
@@ -33,7 +33,7 @@ from form_automation_working import (
 
 def select_dropdown_option(nova, label, value):
     """
-    Select an option from a dropdown field in the form - optimized approach.
+    Select an option from a dropdown field in the form - simplified approach.
     
     Args:
         nova: NovaAct instance
@@ -47,11 +47,8 @@ def select_dropdown_option(nova, label, value):
     logger.info(f"Selecting '{value}' for dropdown '{label}'")
     
     try:
-        # Single command with clear instructions
-        command = (
-            f"Find the dropdown field labeled '{label}', clear any existing text, "
-            f"then type '{value}' into it. Then click somewhere else on the page to confirm."
-        )
+        # Simpler command without extra clicks - following official examples
+        command = f"Find the dropdown field labeled '{label}' and select '{value}'"
         nova.act(command)
         
         logger.info(f"Successfully selected '{value}' for '{label}' dropdown")
@@ -59,11 +56,27 @@ def select_dropdown_option(nova, label, value):
         
     except Exception as e:
         logger.exception(f"Error selecting '{value}' for '{label}' dropdown: {e}")
-        return False
+        
+        # Fallback approach if the primary method fails
+        try:
+            logger.info(f"Trying fallback approach for dropdown '{label}'")
+            
+            fallback_command = (
+                f"Find the field labeled '{label}', click on it, clear any existing text, "
+                f"and enter '{value}'"
+            )
+            nova.act(fallback_command)
+            
+            logger.info(f"Fallback dropdown selection completed")
+            return True
+            
+        except Exception as fallback_error:
+            logger.exception(f"Dropdown fallback also failed: {fallback_error}")
+            return False
 
 def fill_date_field(nova, label, value):
     """
-    Fill a date field in the form - optimized approach.
+    Fill a date field in the form - simplified approach.
     
     Args:
         nova: NovaAct instance
@@ -87,12 +100,8 @@ def fill_date_field(nova, label, value):
             formatted_date = value
             logger.warning(f"Could not parse date format for {value}, using as is")
         
-        # Single command with format specifics
-        command = (
-            f"Find the date field labeled '{label}', clear any existing text, "
-            f"then type '{formatted_date}' (day/month/year format) into it. "
-            f"Then click somewhere else on the page to confirm."
-        )
+        # Simpler command without extra clicks - following official examples
+        command = f"Find the date field labeled '{label}' and enter '{formatted_date}'"
         nova.act(command)
         
         logger.info(f"Successfully filled date field '{label}' with '{formatted_date}'")
@@ -107,11 +116,7 @@ def fill_date_field(nova, label, value):
                 alt_formatted_date = f"{month}/{day}/{year}"
                 logger.info(f"Trying alternative format: {alt_formatted_date}")
                 
-                command = (
-                    f"Find the date field labeled '{label}', clear any existing text, "
-                    f"then type '{alt_formatted_date}' (month/day/year format) into it. "
-                    f"Then click somewhere else on the page to confirm."
-                )
+                command = f"Find the date field labeled '{label}' and enter '{alt_formatted_date}'"
                 nova.act(command)
                 
                 logger.info(f"Alternative date format attempt completed")
@@ -123,7 +128,7 @@ def fill_date_field(nova, label, value):
 
 # Navigation functions for multi-section hard form
 
-def navigate_to_tab(nova, tab_name):
+def navigate_to_tab(nova, tab_name, check_current=True):
     """
     Navigate directly to a specific tab/section in the hard form.
     
@@ -132,6 +137,7 @@ def navigate_to_tab(nova, tab_name):
         tab_name: Name of the tab to navigate to 
                  (Options: "Contact Details", "Business Info", "Premises Details",
                   "Security & Safety", "Coverage Options")
+        check_current: Whether to check if we're already on the requested tab
         
     Returns:
         bool: True if successful
@@ -139,14 +145,24 @@ def navigate_to_tab(nova, tab_name):
     logger = logging.getLogger("nova_form_automation")
     logger.info(f"Navigating to tab: '{tab_name}'")
     
+    # If check_current is enabled, first check if we're already on this tab
+    if check_current:
+        try:
+            from nova_act import BOOL_SCHEMA
+            
+            check_command = f"Am I already on the '{tab_name}' section of the form? Answer true or false."
+            result = nova.act(check_command, schema=BOOL_SCHEMA)
+            
+            if result.matches_schema and result.parsed_response:
+                logger.info(f"Already on the '{tab_name}' tab, no navigation needed")
+                return True
+                
+        except Exception as check_e:
+            logger.warning(f"Error checking current tab: {check_e}, proceeding with navigation")
+    
     try:
-        # Using the improved command that worked in testing
-        command = (
-            f"Check if the all the form sections/tabs are visible. "
-            f"If you cant see the sections/tabs then Scroll to the top of the page to see all the form sections/tabs. "
-            f"Find and click on the tab or section labeled '{tab_name}'. "
-            f"Wait for the section to fully load."
-        )
+        # Simple, direct command - following official examples
+        command = f"Click on the tab labeled '{tab_name}' at the top of the form"
         nova.act(command)
         
         # Brief pause to ensure the section is fully loaded and interactive
@@ -162,11 +178,10 @@ def navigate_to_tab(nova, tab_name):
         try:
             logger.info(f"Trying fallback approach for navigating to '{tab_name}'")
             
-            # Alternative approach looking for visual indicators
+            # More detailed instructions for fallback
             fallback_command = (
-                f"Look for any navigation menu, tabs, or breadcrumbs at the top of the form. "
-                f"Find the option that says '{tab_name}' and click on it. "
-                f"If you don't see it immediately, try scrolling to the top of the page first."
+                f"Scroll to the top of the page to see the navigation tabs. "
+                f"Find and click on the tab labeled '{tab_name}'"
             )
             nova.act(fallback_command)
             
@@ -191,13 +206,8 @@ def click_next_button(nova):
     logger.info("Clicking Next button to proceed to next section")
     
     try:
-        # First scroll to the bottom of the current section to ensure the Next button is visible
-        command = (
-            "Check if you can see the 'Next' button at the bottom of the current form section. "
-            "If not, scroll down until you can see it. "
-            "Then click the blue 'Next' button to proceed to the next section. "
-            "Wait for the next section to fully load before proceeding."
-        )
+        # Simple, direct command - following official examples
+        command = "Scroll down and click the blue 'Next' button at the bottom of the form"
         nova.act(command)
         
         # Brief pause to allow for page transition
@@ -213,12 +223,10 @@ def click_next_button(nova):
         try:
             logger.info("Trying fallback approach for clicking Next button")
             
-            # More specific instructions for finding the Next button
+            # More detailed instructions for fallback
             fallback_command = (
                 "Scroll all the way to the bottom of the current form section. "
-                "Look for a blue button that says 'Next' and click it. "
-                "If you can't find a 'Next' button, try looking for any navigation button "
-                "that would proceed to the next section of the form."
+                "Find and click the blue button labeled 'Next'"
             )
             nova.act(fallback_command)
             
@@ -234,13 +242,14 @@ def click_next_button(nova):
 
 # Section handler functions - implemented according to our step-by-step plan
 
-def fill_contact_details(nova, contact_data):
+def fill_contact_details(nova, contact_data, force_navigation=False):
     """
     Fill the Contact Details section of the hard form.
     
     Args:
         nova: NovaAct instance
         contact_data: Dictionary containing contact section data
+        force_navigation: Force navigation to Contact Details tab even if not needed
         
     Returns:
         bool: True if successful and proceeded to next section
@@ -249,9 +258,11 @@ def fill_contact_details(nova, contact_data):
     logger.info("Filling Contact Details section")
     
     try:
-        # Skip navigation for Contact Details since the form opens on this tab by default
-        # Only uncomment the line below if we're coming from another section
-        # navigate_to_tab(nova, "Contact Details")
+        # The form opens on Contact Details by default, so only navigate if forced
+        # or if we're coming back to this section from elsewhere
+        if force_navigation:
+            if not navigate_to_tab(nova, "Contact Details"):
+                logger.warning("Failed to navigate to Contact Details tab")
         
         # Fill in the title field (dropdown)
         if "title" in contact_data:
@@ -292,6 +303,10 @@ def fill_contact_details(nova, contact_data):
         if "numberOfYearsAsLandlord" in contact_data:
             if not fill_text_field(nova, "Number of Years as Landlord", str(contact_data["numberOfYearsAsLandlord"])):
                 logger.warning("Failed to fill number of years as landlord")
+        
+        # Verify all required fields are filled before proceeding
+        logger.info("Verifying all required fields are filled")
+        nova.act("Scroll through the form and check that all required fields are filled correctly")
         
         # Click Next to proceed to the next section
         if not click_next_button(nova):

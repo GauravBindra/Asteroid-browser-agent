@@ -229,3 +229,21 @@ def navigate_to_tab(nova, tab_name):
 ```
 
 This approach balances conciseness, clarity, and performance while maintaining reliability for form automation.
+
+## Field Targeting Precision
+
+Our testing revealed that precise targeting significantly impacts field interaction success. When the agent clicks near the edge of a field rather than in its center, several issues can occur:
+
+1. **Edge-Clicking Problems:**
+   - The click might activate a different nearby element
+   - The field might not properly receive focus
+   - The click could hit field decorations (icons, borders) instead of the input area
+
+2. **Targeting Ambiguity:**
+   - Multiple fields close together can cause confusion
+   - Labels and fields might not have clear visual boundaries
+
+3. **Best Practice Solutions:**
+   - Always instruct the agent to "click precisely in the center of the input field"
+   - For stubborn fields, consider multiple targeting attempts with different positioning
+   - Enhanced instructions like this significantly improve field interaction reliability

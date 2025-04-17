@@ -88,28 +88,51 @@ After analyzing the debug logs, we identified several issues and made comprehens
   - Better contextual instructions for the agent
   - Explicit success criteria built into commands
 
-## Current Best Implementation
+## Field Filling Issues
 
-### Optimized Dropdown Selection:
+### Missing Title and Phone Number:
+
+1. **Random Click Interference:**
+   - The "click somewhere else on the page to confirm" pattern caused issues
+   - Random clicks were potentially clearing fields or disrupting focus
+   - Title field was not consistently being detected and filled
+   - Phone Number field was filled but not properly registering
+
+2. **Complexity in Instructions:**
+   - Multi-step instructions were too complex (clear + type + click elsewhere)
+   - Nova-ACT official examples use simpler, more direct instructions
+   - Our approach deviated from the recommended patterns
+
+### Solution: Simplified Field Interaction
+
+1. **Removed Extra Clicks:**
+   - Eliminated all "click somewhere else on the page" instructions
+   - Used direct, single-purpose commands for each field interaction
+   - Followed official GitHub examples pattern for instructions
+
+2. **Added Verification Step:**
+   - Added a final verification scan of the form before clicking Next
+   - This ensures all required fields are filled correctly
+   - Helps catch any missed or incorrectly filled fields
+
+## Current Best Implementation (Version 8)
+
+### Simplified Dropdown Selection:
 
 ```python
 def select_dropdown_option(nova, label, value):
     """Select an option from a dropdown field in the form."""
     try:
-        # Single command with clear instructions
-        command = (
-            f"Find the dropdown field labeled '{label}', clear any existing text, "
-            f"then type '{value}' into it. Then click somewhere else on the page to confirm."
-        )
+        # Simpler command without extra clicks - following official examples
+        command = f"Find the dropdown field labeled '{label}' and select '{value}'"
         nova.act(command)
         
         return True
     except Exception as e:
-        logger.exception(f"Error selecting '{value}' for '{label}' dropdown: {e}")
-        return False
+        # Fallback approach if needed...
 ```
 
-### Optimized Date Field Handling:
+### Simplified Date Field Handling:
 
 ```python
 def fill_date_field(nova, label, value):
@@ -119,17 +142,32 @@ def fill_date_field(nova, label, value):
         year, month, day = value.split('-')
         formatted_date = f"{day}/{month}/{year}"
         
-        # Single command with format specifics
-        command = (
-            f"Find the date field labeled '{label}', clear any existing text, "
-            f"then type '{formatted_date}' (day/month/year format) into it. "
-            f"Then click somewhere else on the page to confirm."
-        )
+        # Simpler command without extra clicks - following official examples
+        command = f"Find the date field labeled '{label}' and enter '{formatted_date}'"
         nova.act(command)
         
         return True
     except Exception:
         # Fallback to MM/DD/YYYY format if needed...
+```
+
+### Streamlined Navigation:
+
+```python
+def navigate_to_tab(nova, tab_name):
+    """Navigate to a specific tab in the form."""
+    # Simple, direct command - following official examples
+    command = f"Click on the tab labeled '{tab_name}' at the top of the form"
+    nova.act(command)
+    return True
+```
+
+### Verification Before Proceeding:
+
+```python
+# Verify all required fields are filled before proceeding
+logger.info("Verifying all required fields are filled")
+nova.act("Scroll through the form and check that all required fields are filled correctly")
 ```
 
 ### Streamlined Section Handler:
@@ -178,6 +216,12 @@ def fill_contact_details(nova, contact_data):
    - This might be related to page refreshes or state changes during navigation
    - The "AssertionError" in Playwright suggests context management issues
 
+4. **Redundant Navigation Attempts:**
+   - The contact details section handler tried to navigate to "Contact Details" tab
+   - However, the form already starts on this tab by default
+   - This caused the agent to try clicking a tab that was already selected
+   - Resulted in confusion as no visible change occurred despite the attempt
+
 ### Navigation Solutions Implemented:
 
 - **Improved Command Structure:**
@@ -195,6 +239,64 @@ def fill_contact_details(nova, contact_data):
   - Added robust error handling that can recover from browser context issues
   - Implemented fallback approaches with alternative navigation strategies
   - Added appropriate pauses between navigation operations
+
+- **Current Section Detection:**
+  - Added schema-based checks to detect if we're already on the requested tab
+  - Made navigation conditional with force_navigation parameter
+  - Skipped unnecessary navigation for Contact Details (form's default tab)
+  - Added check_current parameter to navigate_to_tab function
+
+## Recent Testing Observations
+
+Analysis of logs9.md reveals important findings about our implementation:
+
+### 1. Joint Insured Person Name Field Issues
+
+- The field consistently resists filling despite 25+ attempts
+- The agent correctly locates the field but can't populate it
+- Coordinates used (`<box>408,408,430,854</box>`) appear correct but don't work
+- Field appears to have unique behaviors compared to other text fields
+- Exceeded maximum allowed steps (30) trying to fill this field
+
+### 2. Field Value Persistence Issues
+
+- Phone Number appears filled successfully: 
+  ```
+  18af> think("The 'Phone Number' field is now populated with '07823456789'")
+  ```
+- Yet during verification step, it was found empty:
+  ```
+  18af> think("I see the phone number field is empty. I should type '555-555-5555' into the phone number field")
+  ```
+- Despite successful filling logs, some fields don't retain values
+- Verification shows values don't persist even when appearing correctly filled
+
+### 3. Verification Step Behavior
+
+- Verification step automatically proceeded to next section:
+  ```
+  18af> think("I need to check the next page to see if all required fields are filled correctly. I should click the next button to go to the next page.")
+  ```
+- This premature navigation confuses the verification process:
+  ```
+  18af> think("I can see that the business name and business type fields are not filled in.")
+  ```
+- Verification needs to be limited to current section only
+- Current implementation incorrectly assumes we should check next section
+
+### 4. Maximum Steps Limitations
+
+- Nova-ACT has a 30-step limit per command:
+  ```
+  ActExceededMaxStepsError(
+      message = Allowed Steps Exceeded
+      metadata = ActMetadata(
+          num_steps_executed = 30
+      )
+  )
+  ```
+- Complex field interactions require strategies to work within this constraint
+- Need to handle fields that exceed this limit differently
 
 ## Key Takeaways from Official Nova-ACT Best Practices
 
@@ -222,5 +324,11 @@ Based on official GitHub examples and our experiences:
    - For navigation, include conditional checks: "Check if you can already see X, if not then do Y"
    - For multi-step forms, create specific instructions for each section
    - Address common failure points explicitly in commands
+
+6. **Handle Stubborn Fields Differently:**
+   - For fields that resist normal input methods, try alternative approaches
+   - In extreme cases, consider using direct Playwright interactions
+   - Implement special retry logic for problematic fields
+   - Avoid operations that might clear or reset field values
 
 These improvements collectively provide a faster, more reliable implementation for both field interactions and section navigation, while maintaining the robustness needed for complex form automation.
