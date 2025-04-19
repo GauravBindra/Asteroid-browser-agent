@@ -53,6 +53,68 @@ nova.act("Scroll down to see all fields in the Contact Details section")
 result = nova.act(f"Is there a field labeled '{label}'?", schema=BOOL_SCHEMA)
 ```
 
+### 5. Handling Composite Fields in JSON Data
+
+**Problem:** The form data JSON contains nested objects (composite fields) such as addresses:
+
+```json
+"address": {
+  "addressLine1": "42 Nebula Gardens",
+  "addressLine2": "Cosmic Quarter",
+  "addressLine3": "Starlight District",
+  "city": "Newcastle",
+  "postcode": "NE1 4XD"
+}
+```
+
+But our form field mapping is designed for flat key-value pairs.
+
+**Potential Solutions:**
+
+1. **Generic Composite Field Handling:**
+   ```python
+   # In config.py
+   "address": "composite", # Special type for nested objects
+   
+   # In handler logic
+   if field_type == "composite" and isinstance(value, dict):
+       for sub_key, sub_value in value.items():
+           # Process each sub-field
+   ```
+
+2. **Structured Configuration:**
+   ```python
+   # In config.py
+   "address": {
+       "type": "composite",
+       "fields": ["addressLine1", "addressLine2", "addressLine3", "city", "postcode"]
+   }
+   ```
+
+3. **Pragmatic Field-Specific Handling (Selected Approach):** 
+   Directly handle the known composite fields without overengineering:
+
+   ```python
+   # In business_info_handler.py
+   if "address" in business_data:
+       address_data = business_data["address"]
+       
+       # Process each address field individually
+       if "addressLine1" in address_data:
+           fill_text_field(nova, "Address Line 1", address_data["addressLine1"])
+       
+       if "addressLine2" in address_data:
+           fill_text_field(nova, "Address Line 2", address_data["addressLine2"])
+       
+       # And so on for each subfield
+   ```
+
+**Rationale for Selected Approach:**
+- Only two fields in the entire form data are composite (addresses in business and premises sections)
+- Direct handling is more explicit and easier to understand
+- Follows the incremental implementation principle of solving immediate needs
+- Avoids complex data structures that might introduce bugs
+
 ## Next Steps
 
 - Test the various solutions to determine which provides the most reliable field detection

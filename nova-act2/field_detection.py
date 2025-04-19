@@ -34,8 +34,8 @@ def field_exists(nova: NovaAct, label: str, current_tab: str) -> bool:
         #     f"includes '{label}'? Answer true or false."
         # )
         query = (
-            f"Are you able to Find {label} field in {current_tab} section? "
-            f"Scroll down if needed. Answer true or false."
+            f"Is there a field '{label}' in {current_tab} section? "
+            f"Answer true or false."
         )
 #         query = (
 #     f"Look at the {current_tab} section of the form carefully. "
@@ -55,7 +55,8 @@ def field_exists(nova: NovaAct, label: str, current_tab: str) -> bool:
             logger.info(f"Field labeled '{label}' found in {current_tab} tab")
             return True
         else:
-            nova.act("Scroll down")
+            nova.act(f"Scroll down till you find '{label}'",
+                    f"Stop scrolling if you have reached the bottom of the page")
             result = nova.act(query, schema=BOOL_SCHEMA)
 
             if result.parsed_response:
