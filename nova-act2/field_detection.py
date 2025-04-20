@@ -48,15 +48,14 @@ def field_exists(nova: NovaAct, label: str, current_tab: str) -> bool:
         # logger.info(result.matches_schema)
         # logger.info(result.parsed_response)
 
-        while result.matches_schema == False:
-            result = nova.act(query, schema=BOOL_SCHEMA)
+        # while result.matches_schema == False:
+        #     result = nova.act(query, schema=BOOL_SCHEMA)
 
         if result.parsed_response:
             logger.info(f"Field labeled '{label}' found in {current_tab} tab")
             return True
         else:
-            nova.act(f"Scroll down till you find '{label}'",
-                    f"Stop scrolling if you have reached the bottom of the page")
+            nova.act(f"Find '{label}' field. Scroll down if needed. Stop scrolling if you see the footer section containing terms like 'Resources' and 'Connect'.")
             result = nova.act(query, schema=BOOL_SCHEMA)
 
             if result.parsed_response:
@@ -64,8 +63,16 @@ def field_exists(nova: NovaAct, label: str, current_tab: str) -> bool:
                 return True
             else:
                 logger.info(f"Field labeled '{label}' not found in {current_tab} tab")
-            return False
-    
+                nova.act(f"Find '{label}' field. Scroll down if needed. Stop scrolling if you see the Page Title 'Commercial Property Insurance Application'")
+                result = nova.act(query, schema=BOOL_SCHEMA)
+
+                if result.parsed_response:
+                    logger.info(f"Field labeled '{label}' found in {current_tab} tab")
+                    return True
+                else:
+                    logger.info(f"Field labeled '{label}' not found in {current_tab} tab")
+                    return False
+
     except Exception as e:
         logger.exception(f"Error checking if field exists: {e}")
         return False

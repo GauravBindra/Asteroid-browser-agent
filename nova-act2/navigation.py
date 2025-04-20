@@ -25,8 +25,8 @@ def click_button(nova, label):
         # Use Nova-ACT's natural language capability to click the button
         query = (
             f"Find and click the button labeled '{label}'."
-            f" Scroll down if necessary."
-            f" Stop scrolling if you see the footer."
+            f" Scroll down if needed."
+            # f" Stop scrolling if you see the footer."
         )
         nova.act(query)
         

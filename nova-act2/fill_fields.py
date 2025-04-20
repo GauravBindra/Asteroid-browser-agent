@@ -27,7 +27,7 @@ def fill_text_field(nova, label, value):
     try:
         # Use Nova-ACT's natural language capability to fill the field
         query = (
-                f"In the form, Find the textbox of the'{label}' field and fill'{value}' into the field."
+                f"In the form, Fill '{value}' into the '{label}' field."
                 # f" Scroll if necessary."
                 # f" Stop scrolling if you see the header or footer."
             )
@@ -56,26 +56,49 @@ def fill_checkbox(nova, label, should_check):
     query = ( )
     if should_check:
         logger.info(f"Checking checkbox '{label}'")
-        query = (f"In the form, Find the checkbox field '{label}' and check it.", 
-                # f" Scroll if necessary.",
-                # f" Stop scrolling if you see the header or footer."
-                )
+        query = (f"In the form, Find the checkbox labelled '{label}' and check it.")
+
+        nova.act(query) 
+
+        query2 = (
+            f"Is the checkbox '{label}' checked? "
+            f"Answer true or false."
+        )
+        result = nova.act(query2, schema=BOOL_SCHEMA)
+
+        if result.parsed_response:
+            logger.info(f"Checkbox '{label}' is checked")
+            return True
+        else:
+            
+            logger.info(f"Checkbox '{label}' is not checked. Trying to check again")
+            nova.act(query) 
+            result = nova.act(query2, schema=BOOL_SCHEMA)
+
+            if result.parsed_response:
+                logger.info(f"Checkbox '{label}' is checked")
+                return True
+            else:
+                logger.info(f"Checkbox '{label}' is not checked")
+                return False
+
+
     else:
-        logger.info(f"Ensuring checkbox '{label}' is unchecked")
-        query = (f"Find and ensure the checkbox labeled '{label}' is clear or unchecked.", 
-                f" Scroll if necessary.",
-                f" Stop scrolling if you see the header or footer.")
-    
-    try:
-        # Use Nova-ACT's natural language capability to handle the checkbox
-        nova.act(query)
+        query3 = (
+            f"Is the checkbox '{label}' unchecked? "
+            f"Answer true or false."
+        )
+        result = nova.act(query3, schema=BOOL_SCHEMA)
         
-        logger.info(f"Successfully handled checkbox '{label}'")
-        return True
-        
-    except Exception as e:
-        logger.exception(f"Error handling checkbox '{label}': {e}")
-        return False
+        if result.parsed_response:
+            logger.info(f"Checkbox '{label}' is unchecked")
+            return True
+        else:
+            query4 = (f"Find the checkbox labelled '{label}' and uncheck it.")
+            nova.act(query4)
+            logger.info(f"Checkbox '{label}' is unchecked")
+            return False
+
 
 
 
