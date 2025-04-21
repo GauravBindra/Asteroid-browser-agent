@@ -24,7 +24,7 @@ def section_exists(nova, section_name):
         bool: True if section exists, False otherwise
     """
     logger.info(f"Checking if section '{section_name}' exists")
-    
+    nova.act(f"Scroll up till you see 'Commercial Property Insurance Application'.",max_steps=3)
     # First, let's try to find it by exact name
     query = f"Is there a section labeled '{section_name}' in this form? Answer true or false."
     result = nova.act(query, schema=BOOL_SCHEMA)

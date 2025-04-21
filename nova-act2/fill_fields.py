@@ -27,7 +27,7 @@ def fill_text_field(nova, label, value):
     try:
         # Use Nova-ACT's natural language capability to fill the field
         query = (
-                f"In the form, Fill '{value}' into the '{label}' field."
+                f"In the form, in the center of '{label}' field textbox, Fill '{value}' ."
                 # f" Scroll if necessary."
                 # f" Stop scrolling if you see the header or footer."
             )
@@ -246,6 +246,137 @@ def fill_address_fields(nova, section_label, address_data):
             
             # Update overall success status
             if not field_success:
+                logger.warning(f"Failed to fill address field '{full_label}'")
+                success = False
+        
+        if success:
+            logger.info(f"Successfully filled all address fields in {section_label}")
+        else:
+            logger.warning(f"Some address fields in {section_label} could not be filled")
+            
+        return success
+            
+    except Exception as e:
+        logger.exception(f"Error filling address fields in {section_label}: {e}")
+        return False
+
+# def fill_address_fields(nova, section_label, address_data):
+#     """
+#     Fill a complete address block in the form.
+#     """
+#     logger = logging.getLogger("nova_form_automation")
+#     logger.info(f"Filling address fields in {section_label} section")
+    
+#     success = True
+    
+#     # Define field mappings (JSON keys to form labels)
+#     field_mappings = {
+#         "addressLine1": "Address Line 1",
+#         "addressLine2": "Address Line 2",
+#         "addressLine3": "Address Line 3",
+#         "city": "City",
+#         "postcode": "Postcode"
+#     }
+    
+#     try:
+#         # First verify which fields exist in the form
+#         available_fields = {}
+#         for key, form_label in field_mappings.items():
+#             if field_exists(nova, form_label, section_label):
+#                 available_fields[key] = form_label
+#             else:
+#                 logger.info(f"Field '{form_label}' not found in form, skipping")
+        
+#         # Now fill only the available fields
+#         for key, form_label in available_fields.items():
+#             if key not in address_data:
+#                 logger.info(f"Skipping {key} - not in address data")
+#                 continue
+                
+#             value = address_data[key]
+#             if not value:
+#                 logger.info(f"Skipping {key} - empty value")
+#                 continue
+                
+#             logger.info(f"Filling address field '{form_label}' with '{value}'")
+#             field_success = fill_text_field(nova, form_label, value)
+            
+#             if not field_success:
+#                 logger.warning(f"Failed to fill address field '{form_label}'")
+#                 success = False
+        
+#         return success
+            
+#     except Exception as e:
+#         logger.exception(f"Error filling address fields in {section_label}: {e}")
+#         return False
+
+
+def fill_address_fields(nova, section_label, address_data):
+    """
+    Fill a complete address block in the form.
+    
+    This function handles multi-field address entries, filling each component
+    of the address (address lines, city, postcode) in sequence.
+    
+    Args:
+        nova: NovaAct instance
+        section_label: Section containing the address fields (e.g., "Contact Details")
+        address_data: Dictionary containing address components:
+                     {
+                         "addressLine1": "42 Nebula Gardens",
+                         "addressLine2": "Cosmic Quarter",
+                         "addressLine3": "Starlight District",
+                         "city": "Newcastle",
+                         "postcode": "NE1 4XD"
+                     }
+        
+    Returns:
+        bool: True if all fields filled successfully
+    """
+    logger = logging.getLogger("nova_form_automation")
+    logger.info(f"Filling address fields in {section_label} section")
+    
+    # Track success of each field
+    success = True
+    
+    # Define field mappings (JSON keys to form labels)
+    field_mappings = {
+        "addressLine1": "Address Line 1",
+        "addressLine2": "Address Line 2",
+        "addressLine3": "Address Line 3",
+        "city": "City",
+        "postcode": "Postcode"
+    }
+    
+    try:
+        # Fill each address field in sequence
+        for key, form_label in field_mappings.items():
+            # Skip if this field isn't in the data
+            if key not in address_data:
+                logger.info(f"Skipping {key} - not in address data")
+                continue
+                
+            value = address_data[key]
+            if not value:  # Skip empty values
+                logger.info(f"Skipping {key} - empty value")
+                continue
+                
+            # Full label might include section context
+            full_label = form_label
+            
+            # Fill this field
+            logger.info(f"Filling address field '{full_label}' with '{value}'")
+
+            query = (
+            f"Is there a placeholder '{form_label}' in an empty Address field textbox? "
+            f"Answer true or false."
+            )
+            result = nova.act(query, schema=BOOL_SCHEMA)
+                        
+            if result.parsed_response:
+                field_success = fill_text_field(nova, form_label, value)
+            else:
                 logger.warning(f"Failed to fill address field '{full_label}'")
                 success = False
         

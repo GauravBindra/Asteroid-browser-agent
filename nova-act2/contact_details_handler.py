@@ -72,10 +72,10 @@ def handle_contact_details(nova: NovaAct, form_data: dict) -> bool:
         logger.info(f"Processing field '{label}' (key: {key}, type: {field_type}, value: {value})")
         
         # Check if field exists in the form
-        if not field_exists(nova, label, section_name):
+        if not field_exists(nova, label, section_name, field_type):
             logger.warning(f"Field '{label}' does not exist in the form, checking with raw key")
             # Try with the raw key if the label doesn't exist
-            if not field_exists(nova, key, section_name):
+            if not field_exists(nova, key, section_name, field_type):
                 logger.warning(f"Field '{key}' also does not exist, skipping")
                 continue
             else:

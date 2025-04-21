@@ -36,13 +36,13 @@ FORM_SECTIONS = [
 SECTION_MAPPING = {
     "contact": "Contact Details",
     "business": "Business Info",
-    "premises": {
-        "identity": "Property Identity",
-        "construction": "Construction Details"
-    },
+    "premises": "Premises Details",
     "security": "Security & Safety",
-    "coverage": "Coverage Options"
+    "fireSafety": "Fire Safety",  # Fire safety is likely part of Security & Safety section
+    "coverage": "Coverage Options",
+    "materialDamage": "Material Damage"  # Material damage is likely part of Coverage Options
 }
+
 
 # Field type mapping for JSON fields
 # Maps JSON field names to their corresponding field types in the form
@@ -129,7 +129,36 @@ FIELD_TYPES = {
     "hasAlarm": "checkbox",
     "hasSprinklers": "checkbox",
     "lastInspectionDate": "date",
-    "hasFireProtection": "checkbox"
+    "hasFireProtection": "checkbox",
+    
+    # Security & Safety section
+    "cctv": "checkbox",
+    "cctvType": "dropdown",
+    "cctvCoverage": "dropdown",
+    "selfContained": "checkbox",
+    "doorSecurityType": "dropdown",
+    "fittedWithSmokeAlarms": "checkbox",
+    "intruderAlarm": "checkbox",
+    "intruderAlarmType": "dropdown",
+    "requireTerrorismCover": "checkbox",
+    
+    # Fire Safety section
+    "heating": "dropdown",
+    "fireAlarm": "checkbox",
+    "smokingPolicy": "dropdown",
+    "sprinklerSystem": "checkbox",
+    "fireExtinguishers": "checkbox",
+    "fireDetectorsCoverage": "dropdown",
+    "flammableLiquidStored": "checkbox",
+    "flammableLiquids": "text",
+    
+    # Coverage Options section
+    "terrorism": "checkbox",
+    "subsidence": "checkbox",
+    "accidentalDamage": "checkbox",
+    "sumInsuredLossOfRent": "text",
+    "periodOfIndemnityInMonths": "dropdown",
+    "propertyOwnersLiabilityAmount": "text"
 }
 
 # Field dependencies configuration
@@ -143,27 +172,27 @@ FIELD_DEPENDENCIES = {
     "flatRoofLastInspected": {
         "prerequisite_field": "hasFlatRoof",
         "prerequisite_value": True,
-        "section": "Premises Construction"
+        "section": "Premises Details"
     },
     "percentageOfFlatRoof": {
         "prerequisite_field": "hasFlatRoof",
         "prerequisite_value": True,
-        "section": "Premises Construction"
+        "section": "Premises Details"
     },
     "cctvType": {
         "prerequisite_field": "cctv",
         "prerequisite_value": True,
-        "section": "Security"
+        "section": "Security & Safety"
     },
     "cctvCoverage": {
         "prerequisite_field": "cctv",
         "prerequisite_value": True,
-        "section": "Security"
+        "section": "Security & Safety"
     },
     "ernTaxCode": {
         "prerequisite_field": "exemptFromERNCode",
         "prerequisite_value": False,
-        "section": "Business Details"
+        "section": "Business Info"
     },
 }
 

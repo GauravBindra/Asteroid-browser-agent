@@ -53,7 +53,7 @@ def handle_business_info(nova: NovaAct, form_data: dict) -> bool:
             address_success = fill_address_fields(nova, section_name, value)
             if not address_success:
                 logger.warning("Failed to fill business address fields")
-                success = False
+                # success = False
             continue
         
         # Special case handling for specific business fields
@@ -91,34 +91,35 @@ def handle_business_info(nova: NovaAct, form_data: dict) -> bool:
         logger.info(f"Processing field '{label}' (key: {key}, type: {field_type}, value: {value})")
         
         # Check if field exists in the form
-        if not field_exists(nova, label, section_name):
-            logger.warning(f"Field '{label}' does not exist in the form, checking with raw key")
+        if not field_exists(nova, label, section_name, field_type):
+            logger.warning(f"Field '{label}' does not exist in the form, skipping")
+            continue
             # Try with the raw key if the label doesn't exist
-            if not field_exists(nova, key, section_name):
-                logger.warning(f"Field '{key}' also does not exist, skipping")
-                continue
-            else:
-                # Use the raw key as the label
-                label = key
-                logger.info(f"Using raw key '{key}' as label")
+            # if not field_exists(nova, key, section_name):
+            #     logger.warning(f"Field '{key}' also does not exist, skipping")
+            # continue
+            # else:
+            #     # Use the raw key as the label
+            #     label = key
+            #     logger.info(f"Using raw key '{key}' as label")
         
         # Check if field should be processed based on dependencies
         if not should_process_field(business_data, key, section_name):
             logger.info(f"Skipping field '{label}' due to dependencies")
             continue
         
-        # Fill field based on type
+            # Fill field based on type
         if field_type == "text":
-            field_success = fill_text_field(nova, label, str(value))
+                    field_success = fill_text_field(nova, label, str(value))
         elif field_type == "date":
-            field_success = fill_date_field(nova, label, value)
+                    field_success = fill_date_field(nova, label, value)
         elif field_type == "dropdown":
-            field_success = select_dropdown_option(nova, label, value)
+                    field_success = select_dropdown_option(nova, label, value)
         elif field_type == "checkbox":
-            field_success = fill_checkbox(nova, label, value)
+                    field_success = fill_checkbox(nova, label, value)
         else:
-            logger.error(f"Unknown field type '{field_type}' for field '{label}'")
-            field_success = False
+                    logger.error(f"Unknown field type '{field_type}' for field '{label}'")
+                    field_success = False
         
         if not field_success:
             logger.error(f"Failed to fill field '{label}'")
@@ -158,7 +159,7 @@ if __name__ == "__main__":
             logger.info("Starting Business Info section test")
             
             # Wait for the form to load
-            time.sleep(3)
+            # time.sleep(3)
             
             # Directly navigate to the Business Info section
             logger.info("Attempting to navigate directly to Business Info section")
@@ -167,7 +168,7 @@ if __name__ == "__main__":
                 sys.exit(1)
                 
             # Allow time for the section to load
-            time.sleep(2)
+            # time.sleep(2)
             logger.info("Successfully navigated to Business Info section")
                 
             # Now process Business Info section
@@ -180,7 +181,7 @@ if __name__ == "__main__":
                 
             # Wait to observe the results
             logger.info("Waiting 5 seconds to observe results...")
-            time.sleep(5)
+            # time.sleep(5)
             
     except Exception as e:
         logger.exception(f"Error in Business Info handler test: {e}")
