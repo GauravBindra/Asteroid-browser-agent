@@ -102,6 +102,17 @@ Logs are stored in `nova-act2/logs/` with timestamps for easy tracking. Each run
 4. Push to the branch
 5. Create a Pull Request
 
+## Screen Recordings
+
+A collection of screen recordings demonstrating the form automation in action can be found here:
+[Screen Recordings](https://drive.google.com/drive/folders/1tTeWpH_PzgExxGOSuk1bW2uoySSfBlg4?usp=sharing)
+
+These recordings show:
+- Form automation process
+- Field detection and filling
+- Error handling and recovery
+- Successful form submissions
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
