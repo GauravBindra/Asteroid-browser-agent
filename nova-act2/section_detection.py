@@ -80,10 +80,10 @@ def sub_section_exists(nova, section_name):
     if result.parsed_response:
         logger.info(f"Sub-section '{section_name}' found after scrolling")
         nova.act(f"Scroll to the top",
-                 f"Stop scrolling if you have reached the top of the page")
+                 f"Stop scrolling if you have reached the top of the page", max_steps=5)
         return True
     else:
         logger.info(f"Sub-section '{section_name}' not found")
         nova.act(f"Scroll to the top",
-                 f"Stop scrolling if you have reached the top of the page")
+                 f"Stop scrolling if you have reached the top of the page", max_steps=5)
         return False

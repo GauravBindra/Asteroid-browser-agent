@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """
-Main orchestration module for Asteroid form automation.
+Enhanced main orchestration module for Asteroid form automation with comprehensive verification.
 
 This module is responsible for:
 1. Loading the form data
 2. Initializing Nova-ACT
-3. Coordinating the filling of each form section
-4. Verifying final submission results
+3. Coordinating the filling of each form section using improved handlers
+4. Verifying fields and sections with retry capabilities
+5. Handling navigation failures with fallback mechanisms
+6. Verifying final submission results
 """
 
 import os
@@ -20,81 +22,42 @@ from nova_act import NovaAct, BOOL_SCHEMA
 # Import configuration
 from config import HARD_FORM_URL, FORM_SECTIONS, SECTION_MAPPING
 
-# Import section handlers
-from contact_details_handler import handle_contact_details
-from business_info_handler import handle_business_info
-from premises_details_handler import handle_premises_details
-from security_safety_handler import handle_security_safety
+# Import improved section handlers with comprehensive verification
+from contact_details_handler3 import handle_contact_details
+from business_info_handler3 import handle_business_info
+from premises_details_handler3 import handle_premises_details
+from security_safety_handler3 import handle_security_safety
+from submission3 import handle_coverage_options, handle_final_submission, verify_submission_result
 
 # Import navigation utilities
-from navigation import click_button
+from navigation import click_button, navigate_to_section
 from section_detection import section_exists
 
 # Import utility functions
-from utils_final import setup_logging, load_json_data
+from utils_final import load_json_data
+from error_handler import navigate_to_next_section
 
-def verify_success_code(nova):
+def automate_form(data_file_path=None, form_url=None):
     """
-    Verify if the form was successfully submitted and received the ASTEROID_1 code.
-    
-    Args:
-        nova: NovaAct instance
-        
-    Returns:
-        bool: True if success code was found, False otherwise
-    """
-    logger = logging.getLogger("nova_form_automation")
-    logger.info("Verifying form submission result")
-    
-    try:
-        # Wait a moment for any success message to appear
-        time.sleep(3)
-        
-        # Ask Nova-ACT to check for the success code
-        query = "Look for a success code on the page. Is there a code that says 'ASTEROID_1'? Answer true or false."
-        result = nova.act(query, schema=BOOL_SCHEMA)
-        
-        if result.matches_schema and result.parsed_response:
-            logger.info("✅ SUCCESS: ASTEROID_1 code found!")
-            return True
-        else:
-            logger.error("❌ FAILURE: ASTEROID_1 code not found")
-            
-            # Check for ASTEROID_0 (data mistake)
-            query = "Is there a code that says 'ASTEROID_0' on the page? Answer true or false."
-            result = nova.act(query, schema=BOOL_SCHEMA)
-            
-            if result.matches_schema and result.parsed_response:
-                logger.error("Found ASTEROID_0 code - there was a mistake in the submitted data")
-            else:
-                logger.error("No ASTEROID code found - form may not have submitted correctly")
-                
-            return False
-            
-    except Exception as e:
-        logger.exception(f"Error verifying success code: {e}")
-        return False
-
-def automate_form(data_file_path=None):
-    """
-    Run the full form automation process.
+    Run the full form automation process with comprehensive verification and error handling.
     
     This function:
     1. Loads the form data
     2. Opens the form with Nova-ACT
     3. Detects which section we're currently on
-    4. Processes each section with the appropriate handler
-    5. Moves to the next section via the "Next" button (clicked by handlers)
+    4. Processes each section with the appropriate enhanced handler
+    5. Navigates between sections with fallback mechanisms if needed
     6. Verifies the success code at the end
     
     Args:
         data_file_path: Path to the JSON data file (optional)
+        form_url: URL of the form to automate (optional)
         
     Returns:
         bool: True if form was successfully completed, False otherwise
     """
     logger = logging.getLogger("nova_form_automation")
-    logger.info("Starting full form automation")
+    logger.info("Starting enhanced form automation with comprehensive verification")
     
     # Load form data
     try:
@@ -103,25 +66,37 @@ def automate_form(data_file_path=None):
             parent_dir = os.path.dirname(script_dir)
             data_file_path = os.path.join(parent_dir, "hard_form_data.json")
         
+        # Check if file exists
+        if not os.path.exists(data_file_path):
+            logger.warning(f"File not found at {data_file_path}, checking alternative locations")
+            # Try different locations
+            if os.path.exists(os.path.join(script_dir, "hard_form_data.json")):
+                data_file_path = os.path.join(script_dir, "hard_form_data.json")
+            elif os.path.exists(os.path.join(parent_dir, "hard_form_data_actual.json")):
+                data_file_path = os.path.join(parent_dir, "hard_form_data_actual.json")
+            elif os.path.exists(os.path.join(script_dir, "hard_form_data_actual.json")):
+                data_file_path = os.path.join(script_dir, "hard_form_data_actual.json")
+                
         form_data = load_json_data(data_file_path)
-        logger.info(f"Successfully loaded form data with sections: {list(form_data.keys())}")
+        logger.info(f"Successfully loaded form data from {data_file_path}")
+        logger.info(f"Form data contains sections: {list(form_data.keys())}")
     except Exception as e:
         logger.error(f"Failed to load form data: {e}")
         return False
     
+    # Use the provided form URL or default to HARD_FORM_URL
+    if form_url is None:
+        form_url = HARD_FORM_URL
+    
     try:
         # Initialize Nova-ACT and navigate to the form
-        logger.info(f"Initializing Nova-ACT for form at {HARD_FORM_URL}")
-        with NovaAct(starting_page=HARD_FORM_URL) as nova:
+        logger.info(f"Initializing Nova-ACT for form at {form_url}")
+        with NovaAct(starting_page=form_url) as nova:
             logger.info("Browser started successfully")
             
-            # Set viewport size to reduce scrolling
-            # try:
-            #     nova.page.set_viewport_size({"width": 2000, "height": 5000})
-            #     logger.info("Browser viewport size set to 2000x5000")
-            # except Exception as e:
-            #     logger.warning(f"Could not set viewport size: {e}")
-            
+            # Use default viewport size
+            logger.info("Using default viewport size")
+                
             # Wait for form to load
             logger.info("Waiting for form to load")
             time.sleep(3)
@@ -159,7 +134,7 @@ def automate_form(data_file_path=None):
                 if not current_section:
                     logger.error(f"Failed to detect current section after processing {sections_processed} sections")
                     # Check if we might be at the completion screen
-                    if verify_success_code(nova):
+                    if verify_submission_result(nova):
                         logger.info("Found success code, form completed successfully!")
                         return True
                     return False
@@ -176,7 +151,7 @@ def automate_form(data_file_path=None):
                 if json_sections:
                     logger.info(f"Processing section {current_section} with data from {json_sections}")
                     
-                    # Call the appropriate handler based on the current form section
+                    # Call the appropriate enhanced handler based on the current form section
                     if current_section == "Contact Details":
                         success = handle_contact_details(nova, form_data)
                     elif current_section == "Business Info":
@@ -186,22 +161,38 @@ def automate_form(data_file_path=None):
                     elif current_section == "Security & Safety":
                         success = handle_security_safety(nova, form_data)
                     elif current_section == "Coverage Options":
-                        logger.info("Coverage Options handler not implemented yet, skipping")
-                        success = click_button(nova, "Next")
+                        success = handle_coverage_options(nova, form_data)
                     else:
                         logger.warning(f"No handler implemented for section '{current_section}', skipping")
                         success = click_button(nova, "Next")
                     
                     if not success:
                         logger.error(f"Failed to process section '{current_section}'")
-                        return False
+                        
+                        # Try fallback navigation if regular navigation failed
+                        logger.info(f"Attempting fallback navigation from section '{current_section}'")
+                        fallback_success = navigate_to_next_section(nova, current_section)
+                        
+                        if not fallback_success:
+                            logger.error(f"Fallback navigation also failed for section '{current_section}'")
+                            return False
+                        
+                        logger.info(f"Fallback navigation successful for section '{current_section}'")
                 else:
                     # No data for this section, just click Next
                     logger.info(f"No data for section {current_section}, skipping")
                     success = click_button(nova, "Next")
                     if not success:
                         logger.error(f"Failed to click Next button in section '{current_section}'")
-                        return False
+                        
+                        # Try fallback navigation if clicking Next failed
+                        fallback_success = navigate_to_next_section(nova, current_section)
+                        
+                        if not fallback_success:
+                            logger.error(f"Fallback navigation also failed for section '{current_section}'")
+                            return False
+                            
+                        logger.info(f"Fallback navigation successful for section '{current_section}'")
                 
                 sections_processed += 1
                 
@@ -214,7 +205,7 @@ def automate_form(data_file_path=None):
                 # Check if we're at the end
                 if sections_processed == max_sections:
                     logger.info("All sections processed, checking for success code")
-                    return verify_success_code(nova)
+                    return verify_submission_result(nova)
                 
                 # Wait for next section to load
                 logger.info("Waiting for next section to load...")
@@ -222,13 +213,32 @@ def automate_form(data_file_path=None):
             
             # If we get here, we've processed all sections
             logger.info("All sections processed, checking for success code")
-            return verify_success_code(nova)
+            return verify_submission_result(nova)
             
     except Exception as e:
         logger.exception(f"Error during form automation: {e}")
         return False
 
 if __name__ == "__main__":
+    import argparse
+    
+    # Set up command-line argument parsing
+    parser = argparse.ArgumentParser(description="Automate form filling using Nova-ACT with enhanced verification")
+    parser.add_argument(
+        "--json", 
+        dest="json_file", 
+        help="Path to the JSON file containing form data (default: hard_form_data.json in parent directory)",
+        default=None
+    )
+    parser.add_argument(
+        "--form-url", 
+        dest="form_url", 
+        help=f"URL of the form to automate (default: {HARD_FORM_URL})",
+        default=HARD_FORM_URL
+    )
+    
+    args = parser.parse_args()
+    
     # Set up logging
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
@@ -248,8 +258,8 @@ if __name__ == "__main__":
     logger = logging.getLogger("nova_form_automation")
     logger.info(f"Logging to {log_file}")
     
-    # Run the form automation
-    success = automate_form()
+    # Run the form automation with the specified JSON file and form URL
+    success = automate_form(args.json_file, args.form_url)
     
     # Exit with appropriate code
     sys.exit(0 if success else 1)

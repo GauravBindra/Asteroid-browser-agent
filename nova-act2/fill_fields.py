@@ -6,6 +6,7 @@ Provides functions to fill various types of form fields using Nova-ACT.
 import logging
 from nova_act import BOOL_SCHEMA
 from date_helpers import detect_order, convert_date
+from verify import verify_field
 
 # ─── Field filling functions ────────────────────────────────────────────────────
 
@@ -27,11 +28,11 @@ def fill_text_field(nova, label, value):
     try:
         # Use Nova-ACT's natural language capability to fill the field
         query = (
-                f"In the form, in the center of '{label}' field textbox, Fill '{value}' ."
+                f"Click in the center of '{label}' field textbox Fill '{value}'."
                 # f" Scroll if necessary."
                 # f" Stop scrolling if you see the header or footer."
             )
-        nova.act(query)
+        nova.act(query, max_steps=5)
         
         logger.info(f"Successfully filled '{label}' field")
         return True
@@ -58,7 +59,7 @@ def fill_checkbox(nova, label, should_check):
         logger.info(f"Checking checkbox '{label}'")
         query = (f"In the form, Find the checkbox labelled '{label}' and check it.")
 
-        nova.act(query) 
+        nova.act(query, max_steps=5) 
 
         query2 = (
             f"Is the checkbox '{label}' checked? "
@@ -95,7 +96,7 @@ def fill_checkbox(nova, label, should_check):
             return True
         else:
             query4 = (f"Find the checkbox labelled '{label}' and uncheck it.")
-            nova.act(query4)
+            nova.act(query4, max_steps=5)
             logger.info(f"Checkbox '{label}' is unchecked")
             return False
 
@@ -120,7 +121,7 @@ def fill_date_field(nova, label, value):
     try:
         # Simpler command without extra clicks - following official examples
         command = f"Find the date field labeled '{label}'"
-        nova.act(command)
+        nova.act(command, max_steps=5)
         
         pattern = "dd/mm/yyyy"
         flag = detect_order(nova, label, pattern)
@@ -133,7 +134,7 @@ def fill_date_field(nova, label, value):
         logger.info(f"Converted date format from {value} to {formatted_date}")
         
         command = f"Enter '{formatted_date}' into the date field '{label}'"
-        nova.act(command)
+        nova.act(command, max_steps=5)
         
         logger.info(f"Successfully filled date field '{label}' with '{formatted_date}'")
         return True
@@ -161,7 +162,7 @@ def select_dropdown_option(nova, label, value):
     try:
         # Simpler command without extra clicks - following official examples
         command = f"Find the dropdown field labeled '{label}' and select '{value}'"
-        nova.act(command)
+        nova.act(command, max_steps=5)
         
         logger.info(f"Successfully selected '{value}' for '{label}' dropdown")
         return True
@@ -177,7 +178,7 @@ def select_dropdown_option(nova, label, value):
                 f"Find the field labeled '{label}', click on it, clear any existing text, "
                 f"and enter '{value}'"
             )
-            nova.act(fallback_command)
+            nova.act(fallback_command, max_steps=5)
             
             logger.info(f"Fallback dropdown selection completed")
             return True
@@ -314,7 +315,7 @@ def fill_address_fields(nova, section_label, address_data):
 
 def fill_address_fields(nova, section_label, address_data):
     """
-    Fill a complete address block in the form.
+    Fill a complete address block in the form with verification.
     
     This function handles multi-field address entries, filling each component
     of the address (address lines, city, postcode) in sequence.
@@ -332,10 +333,10 @@ def fill_address_fields(nova, section_label, address_data):
                      }
         
     Returns:
-        bool: True if all fields filled successfully
+        bool: True if all detected fields were filled successfully
     """
     logger = logging.getLogger("nova_form_automation")
-    logger.info(f"Filling address fields in {section_label} section")
+    logger.info(f"Filling address fields in {section_label} section with verification")
     
     # Track success of each field
     success = True
@@ -361,27 +362,52 @@ def fill_address_fields(nova, section_label, address_data):
             if not value:  # Skip empty values
                 logger.info(f"Skipping {key} - empty value")
                 continue
-                
-            # Full label might include section context
-            full_label = form_label
             
-            # Fill this field
-            logger.info(f"Filling address field '{full_label}' with '{value}'")
-
+            # Check if field exists in the form
             query = (
-            f"Is there a placeholder '{form_label}' in an empty Address field textbox? "
-            f"Answer true or false."
+                f"Is there a placeholder '{form_label}' in an empty Address field textbox? "
+                f"Answer true or false."
             )
             result = nova.act(query, schema=BOOL_SCHEMA)
-                        
-            if result.parsed_response:
+            
+            if not result.parsed_response:
+                logger.warning(f"Address field '{form_label}' not found in form, skipping")
+                continue
+            
+            # Try to fill with verification
+            field_filled = False
+            max_attempts = 2  # Maximum attempts for each address field
+            
+            for attempt in range(max_attempts):
+                if attempt > 0:
+                    logger.info(f"Retry attempt {attempt} for address field '{form_label}'")
+                
+                # Fill the address field
+                logger.info(f"Filling address field '{form_label}' with '{value}'")
                 field_success = fill_text_field(nova, form_label, value)
-            else:
-                logger.warning(f"Failed to fill address field '{full_label}'")
+                
+                if not field_success:
+                    logger.error(f"Failed to fill address field '{form_label}'")
+                    continue  # Try again if filling failed
+                
+                # Verify the field was filled correctly
+                logger.info(f"Verifying address field '{form_label}'")
+                verification_success = verify_field(nova, form_label, value, "text")
+                
+                if verification_success:
+                    logger.info(f"Verification successful for address field '{form_label}'")
+                    field_filled = True
+                    break  # Field successfully filled and verified
+                else:
+                    logger.warning(f"Verification failed for address field '{form_label}', will retry")
+            
+            # Update overall success status
+            if not field_filled:
+                logger.error(f"Failed to fill address field '{form_label}' after multiple attempts")
                 success = False
         
         if success:
-            logger.info(f"Successfully filled all address fields in {section_label}")
+            logger.info(f"Successfully filled all detected address fields in {section_label}")
         else:
             logger.warning(f"Some address fields in {section_label} could not be filled")
             

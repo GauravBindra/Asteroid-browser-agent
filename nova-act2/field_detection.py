@@ -44,7 +44,7 @@ def navigate_to_subsection(nova, section_name, subsection_name):
     )
     
     try:
-        nova.act(navigation_command)
+        nova.act(navigation_command, max_steps=3)
         
         # Verify we found the right subsection
         verify = nova.act(
@@ -87,7 +87,7 @@ def field_exists(nova: NovaAct, label: str, current_tab: str, field_type: str = 
             logger.warning(f"Could not navigate to {subsection} subsection, field detection may fail")
     else:
         location = f"{current_tab} tab"
-        logger.info(f"Checking if '{field_type}' field labeled '{label}' exists in {location}")
+        logger.info(f"Checking if '{field_type}' field labeled '{label}' exists {location}")
     
     try:
         # Include field type and subsection in query if provided
