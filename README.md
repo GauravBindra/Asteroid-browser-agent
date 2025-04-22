@@ -1,67 +1,107 @@
 # Asteroid Form Challenge
 
-This repository contains a solution for the Asteroid Form Challenge, which aims to automate the filling and submission of web forms.
+This repository contains a solution for the Asteroid Form Challenge, which aims to automate the filling and submission of web forms using Nova-ACT, a powerful browser automation framework.
 
 ## Project Overview
 
-The project is being developed in two distinct phases:
+The project uses Nova-ACT's natural language capabilities to interact with web forms in a more human-like way. The current implementation focuses on reliable form filling with extensive verification and error handling.
 
-### Phase 1: DOM-Based Approach (Current)
-- **Status**: ✅ Successfully implemented for the easy form
-- **Implementation**: Uses Playwright for direct DOM manipulation
-- **Scope Decision**: Limited to the easy form only
-- **Result**: Successfully captures the "ASTEROID_1" result code
+### Key Features
+- Natural language-based field detection and interaction
+- Robust field verification and retry mechanisms
+- Comprehensive error handling and logging
+- Support for both easy and hard form variants
+- Command-line interface for flexible usage
 
-### Phase 2: CUA-Based Approach (Planned)
-- **Status**: 🔜 In planning
-- **Implementation**: Will use vision-based interactions rather than direct DOM manipulation
-- **Scope**: Will aim to handle both easy and hard forms
-- **Approach**: More human-like interactions with visual recognition
+## Prerequisites
 
-## DOM Approach Limitations
+1. **Python Environment**
+   - Python 3.8 or higher
+   - Virtual environment recommended
 
-The current DOM-based approach works well for the easy form but has limitations that became apparent when attempting to automate the hard form:
+2. **Nova-ACT API Key**
+   - Required for using Nova-ACT
+   - Get your API key from [Nova-ACT](https://nova-act.com)
+   - Add to `.env` file:
+     ```
+     NOVA_ACT_API_KEY=your_api_key_here
+     ```
 
-1. **Brittleness to Form Changes**: Relies on specific CSS selectors and DOM structure
-2. **Limited Adaptability**: Requires custom implementation for each form
-3. **Lack of Visual Understanding**: Cannot interpret the visual layout or context of elements
-4. **Implementation Complexity**: Requires multiple modules and strategies
-
-For a detailed analysis of the DOM approach's strengths and limitations, see [DOM_approach_analysis.md](DOM_approach_analysis.md).
+3. **Dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 ## Project Structure
 
-- `DOM_approach/`: Contains the DOM-based implementation
-  - `form_automator.py`: Core automation logic
-  - `element_utils.py`: Utilities for finding and interacting with DOM elements
-  - `form_schemas.py`: Schemas defining the structure of forms
-  - `data_mapper.py`: Maps input data to form fields
-  - `config.py`: Configuration settings
-  - `main.py`: Entry point for running the automation
-- `utils/`: Shared utilities
-  - `logger.py`: Logging functionality
-- `data_mapping_strategy.md`: Documentation on data mapping approach
-- `form_architecture.md`: Documentation on form architecture
-- `easy_form_data.json`: Test data for the easy form
-- `hard_form_data.json`: Test data for the hard form (not currently used)
+- `nova-act2/`: Main implementation directory
+  - `main_form_automation3.py`: Core automation script
+  - `easy_form_automation.py`: Easy form specific implementation
+  - `fill_fields.py`: Field filling utilities
+  - `field_detection.py`: Field detection logic
+  - `navigation.py`: Page navigation utilities
+  - `verify.py`: Field verification functions
+  - `error_handler.py`: Error handling utilities
+  - `date_helpers.py`: Date field handling
+  - Handlers for specific form sections (contact, business, etc.)
 
 ## Usage
 
-To run the DOM-based automation for the easy form:
+1. **Run Hard Form Automation**
+   ```bash
+   python3 nova-act2/main_form_automation3.py \
+     --json=/path/to/hard_form_data.json \
+     --form-url=https://asteroid.ai/form
+   ```
 
-```bash
-python DOM_approach/main.py --form easy --data easy_form_data.json --screenshots
-```
+2. **Run Easy Form Automation**
+   ```bash
+   python3 nova-act2/easy_form_automation.py
+   ```
 
-## Development Notes
+### Command Line Arguments
+- `--json`: Path to JSON file containing form data
+- `--form-url`: URL of the form to automate
 
-- **April 14, 2025**: Successfully implemented the two-step submission process for the easy form
-- **April 14, 2025**: Decided to limit the DOM-based approach to the easy form only, as the hard form would require significant additional complexity
-- **April 14, 2025**: Focus shifting toward planning the CUA-based approach
+## Implementation Approach
 
-## Next Steps
+1. **Field Detection**
+   - Uses natural language queries to find fields
+   - Handles various field types (text, dropdown, checkbox, date)
+   - Implements smart scrolling for better field discovery
 
-1. Design the architecture for the CUA-based approach
-2. Implement vision-based form interaction capabilities
-3. Develop a more adaptable form recognition system
-4. Test the CUA approach on both easy and hard forms
+2. **Field Filling**
+   - Verifies field existence before attempting to fill
+   - Uses natural language commands for interaction
+   - Validates input after filling
+   - Implements retry logic for failed attempts
+
+3. **Error Handling**
+   - Comprehensive logging of all operations
+   - Multiple retry attempts with different strategies
+   - Detailed error reporting for debugging
+
+4. **Verification**
+   - Verifies each field after filling
+   - Supports different verification strategies per field type
+   - Allows for section-level verification
+
+## Logging
+
+Logs are stored in `nova-act2/logs/` with timestamps for easy tracking. Each run creates a new log file with detailed information about:
+- Field detection attempts
+- Fill operations
+- Verification results
+- Errors and retries
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
