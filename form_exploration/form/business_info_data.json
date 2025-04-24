@@ -1,0 +1,204 @@
+{
+  "name": "Business Info",
+  "index": 1,
+  "elements": [
+    {
+      "type": "input",
+      "inputType": "text",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Business Name",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "select",
+      "inputType": "select-one",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Business Type",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [
+        {
+          "value": "",
+          "text": "Select..."
+        },
+        {
+          "value": "Sole Trader",
+          "text": "Sole Trader"
+        },
+        {
+          "value": "Public Limited Company (PLC)",
+          "text": "Public Limited Company (PLC)"
+        },
+        {
+          "value": "Partnership",
+          "text": "Partnership"
+        },
+        {
+          "value": "Limited Liability Partnership (LLP)",
+          "text": "Limited Liability Partnership (LLP)"
+        },
+        {
+          "value": "Private Limited Company (LTD)",
+          "text": "Private Limited Company (LTD)"
+        }
+      ],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": null
+    },
+    {
+      "type": "input",
+      "inputType": "text",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Trade",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "text",
+      "id": "none",
+      "name": "none",
+      "placeholder": "Address Line 1",
+      "label": "none",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "text",
+      "id": "none",
+      "name": "none",
+      "placeholder": "Address Line 2",
+      "label": "",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "text",
+      "id": "none",
+      "name": "none",
+      "placeholder": "Address Line 3",
+      "label": "none",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "text",
+      "id": "none",
+      "name": "none",
+      "placeholder": "City",
+      "label": "none",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "checkbox",
+      "id": "exemptFromERNCode",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Exempt from ERN Code",
+      "value": "on",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "text",
+      "id": "none",
+      "name": "none",
+      "placeholder": "123/AB12345",
+      "label": "ERN Tax Code",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "text",
+      "id": "none",
+      "name": "none",
+      "placeholder": "name@email.com",
+      "label": "none",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [
+        "disabled:opacity-50"
+      ],
+      "isVisible": true,
+      "isDisabled": false
+    }
+  ],
+  "interactive_elements": []
+}

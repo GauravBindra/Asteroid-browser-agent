@@ -1,0 +1,62 @@
+# Environment variables
+.env
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+asteroid_env/
+venv/
+ENV/
+
+# Logs and databases
+*.log
+logs/
+*.sqlite
+*.db
+
+# Playwright
+.playwright-browser-data/
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Nova-ACT specific
+.nova-act-cache/
+.nova-act-traces/
+
+# Output files
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp4
+*.webm
+*.trace.zip
+
+# windsurf rules
+.windsurfrules

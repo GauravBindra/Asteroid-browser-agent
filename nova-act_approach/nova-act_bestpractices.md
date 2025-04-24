@@ -247,3 +247,29 @@ Our testing revealed that precise targeting significantly impacts field interact
    - Always instruct the agent to "click precisely in the center of the input field"
    - For stubborn fields, consider multiple targeting attempts with different positioning
    - Enhanced instructions like this significantly improve field interaction reliability
+
+
+
+we can find the exact co-ordinates of the field 
+from nova_act import NovaAct
+
+with NovaAct(starting_page="https://example.com") as nova:
+    # Use natural language to locate the text box
+    nova.act("find the text box labeled 'Email'")
+
+    # Use Playwright's locator to get the element
+    textbox = nova.page.locator("text='Email'")
+
+    # Retrieve the bounding box
+    box = textbox.bounding_box()
+
+    if box:
+        x, y = box['x'], box['y']
+        print(f"Text box coordinates: x={x}, y={y}")
+    else:
+        print("Could not retrieve the bounding box.")
+
+# Assuming 'nova' is your Nova-ACT instance
+nova.page.mouse.click(x, y)
+nova.page.mouse.click(150, 300)
+

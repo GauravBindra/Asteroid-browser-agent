@@ -1,0 +1,43 @@
+{
+  "name": "Coverage Options",
+  "index": 4,
+  "elements": [
+    {
+      "type": "button",
+      "inputType": "submit",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Previous",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": null
+    },
+    {
+      "type": "input",
+      "inputType": "text",
+      "id": "none",
+      "name": "none",
+      "placeholder": "name@email.com",
+      "label": "none",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [
+        "disabled:opacity-50"
+      ],
+      "isVisible": true,
+      "isDisabled": false
+    }
+  ],
+  "interactive_elements": []
+}

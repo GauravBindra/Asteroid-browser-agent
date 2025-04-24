@@ -1,0 +1,61 @@
+{
+  "contact": {
+    "title": "Prof",
+    "firstName": "Vladimir",
+    "lastName": "McDougal",
+    "dateOfBirth": "1975-06-15",
+    "phoneNumber": "07823456789",
+    "jointInsured": true,
+    "jointInsuredPersonName": "Zelda Winterbottom",
+    "numberOfYearsAsLandlord": 12
+  },
+  "business": {
+    "name": "Quantum Property Dynamics Ltd",
+    "type": "Private Limited Company (LTD)",
+    "trade": "Luxury Space Station Rentals",
+    "address": {
+      "addressLine1": "42 Nebula Gardens",
+      "addressLine2": "Cosmic Quarter",
+      "addressLine3": "Starlight District",
+      "city": "Newcastle"
+    },
+    "ernTaxCode": "789/XZ98765",
+    "exemptFromERNCode": false
+  },
+  "premises": {
+    "identity": {
+      "type": "Commercial",
+      "listed": "Grade II*",
+      "address": {
+        "addressLine1": "789 Moonbeam Boulevard",
+        "addressLine2": "Crystal Wing",
+        "addressLine3": "Aurora Complex",
+        "city": "Brighton",
+        "postcode": "BN1 6ZZ"
+      },
+      "numberOfFlatsInBlock": 23,
+      "numberOfFlatsToBeInsured": 17
+    },
+    "construction": {
+      "roofType": "Slate",
+      "wallType": "Brick Built",
+      "floorType": "Concrete",
+      "stairType": "Metal",
+      "rebuildingCost": 2750000,
+      "numberOfStoreys": 5,
+      "yearOfConstruction": "1998-08-21",
+      "constructionDetails": "Features bio-luminescent facade lighting and self-cleaning windows",
+      "percentageOfFlatRoof": 35,
+      "flatRoofLastInspected": "2023-11-30"
+    }
+  },
+  "security": {
+    "cctv": true,
+    "cctvType": "Recorded and monitored by a professional monitoring company",
+    "cctvCoverage": "Both",
+    "doorSecurityType": "Mortise Deadlock - 5 Or More Levers BS3621"
+  },
+  "coverage": {
+
+  }
+}

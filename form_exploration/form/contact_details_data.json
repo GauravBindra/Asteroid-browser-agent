@@ -1,0 +1,370 @@
+{
+  "name": "Contact Details",
+  "index": 0,
+  "elements": [
+    {
+      "type": "select",
+      "inputType": "select-one",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Title",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [
+        {
+          "value": "",
+          "text": "Select..."
+        },
+        {
+          "value": "Mr",
+          "text": "Mr"
+        },
+        {
+          "value": "Mrs",
+          "text": "Mrs"
+        },
+        {
+          "value": "Ms",
+          "text": "Ms"
+        },
+        {
+          "value": "Dr",
+          "text": "Dr"
+        },
+        {
+          "value": "Prof",
+          "text": "Prof"
+        },
+        {
+          "value": "Other",
+          "text": "Other"
+        }
+      ],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": null
+    },
+    {
+      "type": "input",
+      "inputType": "text",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "First Name",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "text",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Last Name",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "date",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Date of Birth",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "tel",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Phone Number",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "number",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Years as Landlord",
+      "value": "0",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {
+        "min": "0"
+      },
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "checkbox",
+      "id": "jointInsured",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Joint Insured",
+      "value": "on",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "text",
+      "id": "none",
+      "name": "none",
+      "placeholder": "name@email.com",
+      "label": "none",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [
+        "disabled:opacity-50"
+      ],
+      "isVisible": true,
+      "isDisabled": false
+    }
+  ],
+  "interactive_elements": [
+    {
+      "type": "conditional_fields",
+      "trigger": "jointInsured",
+      "revealed_count": 1,
+      "fields": [
+        {
+          "type": "select",
+          "inputType": "select-one",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Title",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [
+            {
+              "value": "",
+              "text": "Select..."
+            },
+            {
+              "value": "Mr",
+              "text": "Mr"
+            },
+            {
+              "value": "Mrs",
+              "text": "Mrs"
+            },
+            {
+              "value": "Ms",
+              "text": "Ms"
+            },
+            {
+              "value": "Dr",
+              "text": "Dr"
+            },
+            {
+              "value": "Prof",
+              "text": "Prof"
+            },
+            {
+              "value": "Other",
+              "text": "Other"
+            }
+          ],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": null
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "First Name",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Last Name",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "date",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Date of Birth",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "tel",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Phone Number",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "number",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Years as Landlord",
+          "value": "0",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {
+            "min": "0"
+          },
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "checkbox",
+          "id": "jointInsured",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Joint Insured",
+          "value": "on",
+          "checked": true,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Joint Insured Person Name",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "name@email.com",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [
+            "disabled:opacity-50"
+          ],
+          "isVisible": true,
+          "isDisabled": false
+        }
+      ]
+    }
+  ]
+}

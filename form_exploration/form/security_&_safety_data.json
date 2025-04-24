@@ -1,0 +1,231 @@
+{
+  "name": "Security & Safety",
+  "index": 3,
+  "elements": [
+    {
+      "type": "input",
+      "inputType": "checkbox",
+      "id": "cctv",
+      "name": "none",
+      "placeholder": "none",
+      "label": "CCTV Installed",
+      "value": "on",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "select",
+      "inputType": "select-one",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Door Security Type",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [
+        {
+          "value": "",
+          "text": "Select..."
+        },
+        {
+          "value": "No Special Security",
+          "text": "No Special Security"
+        },
+        {
+          "value": "Mortise Deadlock - 5 Or More Levers BS3621",
+          "text": "Mortise Deadlock - 5 Or More Levers BS3621"
+        },
+        {
+          "value": "Mortise Deadlock - 3 Lever",
+          "text": "Mortise Deadlock - 3 Lever"
+        },
+        {
+          "value": "Mortise Deadlock - 4 Lever",
+          "text": "Mortise Deadlock - 4 Lever"
+        }
+      ],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": null
+    },
+    {
+      "type": "input",
+      "inputType": "text",
+      "id": "none",
+      "name": "none",
+      "placeholder": "name@email.com",
+      "label": "none",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [
+        "disabled:opacity-50"
+      ],
+      "isVisible": true,
+      "isDisabled": false
+    }
+  ],
+  "interactive_elements": [
+    {
+      "type": "conditional_fields",
+      "trigger": "cctv",
+      "revealed_count": 2,
+      "fields": [
+        {
+          "type": "input",
+          "inputType": "checkbox",
+          "id": "cctv",
+          "name": "none",
+          "placeholder": "none",
+          "label": "CCTV Installed",
+          "value": "on",
+          "checked": true,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "select",
+          "inputType": "select-one",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "CCTV Type",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [
+            {
+              "value": "",
+              "text": "Select..."
+            },
+            {
+              "value": "Recorded only",
+              "text": "Recorded only"
+            },
+            {
+              "value": "Recorded and monitored by policy holder",
+              "text": "Recorded and monitored by policy holder"
+            },
+            {
+              "value": "Recorded and monitored by a professional monitoring company",
+              "text": "Recorded and monitored by a professional monitoring company"
+            }
+          ],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": null
+        },
+        {
+          "type": "select",
+          "inputType": "select-one",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "CCTV Coverage",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [
+            {
+              "value": "",
+              "text": "Select..."
+            },
+            {
+              "value": "Internal only",
+              "text": "Internal only"
+            },
+            {
+              "value": "External only",
+              "text": "External only"
+            },
+            {
+              "value": "Both",
+              "text": "Both"
+            }
+          ],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": null
+        },
+        {
+          "type": "select",
+          "inputType": "select-one",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Door Security Type",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [
+            {
+              "value": "",
+              "text": "Select..."
+            },
+            {
+              "value": "No Special Security",
+              "text": "No Special Security"
+            },
+            {
+              "value": "Mortise Deadlock - 5 Or More Levers BS3621",
+              "text": "Mortise Deadlock - 5 Or More Levers BS3621"
+            },
+            {
+              "value": "Mortise Deadlock - 3 Lever",
+              "text": "Mortise Deadlock - 3 Lever"
+            },
+            {
+              "value": "Mortise Deadlock - 4 Lever",
+              "text": "Mortise Deadlock - 4 Lever"
+            }
+          ],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": null
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "name@email.com",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [
+            "disabled:opacity-50"
+          ],
+          "isVisible": true,
+          "isDisabled": false
+        }
+      ]
+    }
+  ]
+}

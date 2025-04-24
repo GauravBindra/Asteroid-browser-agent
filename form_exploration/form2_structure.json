@@ -1,0 +1,122 @@
+[
+  {
+    "type": "input",
+    "inputType": "text",
+    "id": "none",
+    "name": "none",
+    "placeholder": "none",
+    "label": "First Name",
+    "value": "none",
+    "checked": false,
+    "required": false,
+    "options": []
+  },
+  {
+    "type": "input",
+    "inputType": "text",
+    "id": "none",
+    "name": "none",
+    "placeholder": "none",
+    "label": "Last Name",
+    "value": "none",
+    "checked": false,
+    "required": false,
+    "options": []
+  },
+  {
+    "type": "input",
+    "inputType": "text",
+    "id": "none",
+    "name": "none",
+    "placeholder": "dd-mm-yyyy",
+    "label": "Date of Birth (dd-mm-yyyy)",
+    "value": "none",
+    "checked": false,
+    "required": false,
+    "options": []
+  },
+  {
+    "type": "input",
+    "inputType": "email",
+    "id": "none",
+    "name": "none",
+    "placeholder": "none",
+    "label": "Email",
+    "value": "none",
+    "checked": false,
+    "required": false,
+    "options": []
+  },
+  {
+    "type": "input",
+    "inputType": "tel",
+    "id": "none",
+    "name": "none",
+    "placeholder": "none",
+    "label": "Phone Number",
+    "value": "none",
+    "checked": false,
+    "required": false,
+    "options": []
+  },
+  {
+    "type": "input",
+    "inputType": "checkbox",
+    "id": "hasInsurance",
+    "name": "none",
+    "placeholder": "none",
+    "label": "Do you currently have insurance?",
+    "value": "on",
+    "checked": false,
+    "required": false,
+    "options": []
+  },
+  {
+    "type": "input",
+    "inputType": "checkbox",
+    "id": "wantsNewsletter",
+    "name": "none",
+    "placeholder": "none",
+    "label": "Would you like to receive our newsletter?",
+    "value": "on",
+    "checked": false,
+    "required": false,
+    "options": []
+  },
+  {
+    "type": "input",
+    "inputType": "checkbox",
+    "id": "agreeToTerms",
+    "name": "none",
+    "placeholder": "none",
+    "label": "I agree to the terms and conditions",
+    "value": "on",
+    "checked": false,
+    "required": false,
+    "options": []
+  },
+  {
+    "type": "button",
+    "inputType": "submit",
+    "id": "none",
+    "name": "none",
+    "placeholder": "none",
+    "label": "none",
+    "value": "none",
+    "checked": false,
+    "required": false,
+    "options": []
+  },
+  {
+    "type": "input",
+    "inputType": "text",
+    "id": "none",
+    "name": "none",
+    "placeholder": "name@email.com",
+    "label": "none",
+    "value": "none",
+    "checked": false,
+    "required": false,
+    "options": []
+  }
+]

@@ -233,16 +233,48 @@ def automate_form(data_file_path=None, form_url=None):
                 
                 # Check if we're at the end
                 if sections_processed == max_sections:
-                    logger.info("All sections processed, checking for success code")
-                    return verify_submission_result(nova)
+                    logger.info("All sections processed, handling final submission")
+                    
+                    # First, handle the final submission (just clicks the submit button)
+                    submission_success = handle_final_submission(nova)
+                    if not submission_success:
+                        logger.error("Failed to handle final submission")
+                        return False
+                        
+                    # Then verify the submission result separately
+                    logger.info("Checking for success code")
+                    verification_success = verify_submission_result(nova)
+                    
+                    if verification_success:
+                        logger.info("✅ SUCCESS: ASTEROID_1 code found!")
+                    else:
+                        logger.error("❌ ERROR: ASTEROID code not found or incorrect code found")
+                        
+                    return verification_success
                 
                 # Wait for next section to load
                 logger.info("Waiting for next section to load...")
                 time.sleep(2)
             
             # If we get here, we've processed all sections
-            logger.info("All sections processed, checking for success code")
-            return verify_submission_result(nova)
+            logger.info("All sections processed, handling final submission")
+            
+            # First, handle the final submission (just clicks the submit button)
+            submission_success = handle_final_submission(nova)
+            if not submission_success:
+                logger.error("Failed to handle final submission")
+                return False
+                
+            # Then verify the submission result separately
+            logger.info("Checking for success code")
+            verification_success = verify_submission_result(nova)
+            
+            if verification_success:
+                logger.info("✅ SUCCESS: ASTEROID_1 code found!")
+            else:
+                logger.error("❌ ERROR: ASTEROID code not found or incorrect code found")
+                
+            return verification_success
             
     except Exception as e:
         logger.exception(f"Error during form automation: {e}")

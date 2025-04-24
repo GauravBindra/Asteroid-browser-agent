@@ -166,22 +166,19 @@ def handle_coverage_options(nova: NovaAct, form_data: dict) -> bool:
 def handle_final_submission(nova: NovaAct) -> bool:
     """
     Handle the final review and submission page.
+    This function focuses only on finding and clicking the submit button,
+    without verifying the result code.
     
     Args:
         nova: NovaAct instance
         
     Returns:
-        bool: True if successfully submitted
+        bool: True if a submit button was found and clicked
     """
     logger.info("Processing final submission page")
     
     # Wait for the review page to load
     time.sleep(2)
-    
-    # Check if we're already on a results page with ASTEROID code
-    if verify_submission_result(nova):
-        logger.info("Already on results page with ASTEROID_1 code!")
-        return True
     
     # Check if we're on the review page
     query = (
@@ -199,6 +196,9 @@ def handle_final_submission(nova: NovaAct) -> bool:
     logger.info("Scrolling through the review page")
     nova.act("Scroll down to see all information and find the submission button")
     
+    # Track if any button was successfully clicked
+    button_clicked = False
+    
     # Try to find and click the final submission button
     # Try various common button texts
     for button_text in ["Submit", "Confirm", "Submit Application", "Finish", "Complete", "Submit Quote", "Submit Form"]:
@@ -213,23 +213,28 @@ def handle_final_submission(nova: NovaAct) -> bool:
             
             # Wait for submission to process
             time.sleep(3)
-            
-            # Verify result
-            if verify_submission_result(nova):
-                return True
+            button_clicked = True
+            break
     
     # If we couldn't find any of the expected buttons, try a more general approach
-    logger.warning("Could not find labeled submit button, trying to find any submit button")
-    nova.act(
-        "Find and click the submit button or main call-to-action button at the bottom of the page. "
-        "Look for a prominent button that would finalize the form submission."
-    )
+    if not button_clicked:
+        logger.warning("Could not find labeled submit button, trying to find any submit button")
+        try:
+            nova.act(
+                "Find and click the submit button or main call-to-action button at the bottom of the page. "
+                "Look for a prominent button that would finalize the form submission."
+            )
+            button_clicked = True
+        except Exception as e:
+            logger.error(f"Failed to find and click a submit button: {e}")
     
     # Wait for submission to process
-    time.sleep(3)
+    if button_clicked:
+        logger.info("Waiting for submission to process...")
+        time.sleep(3)
     
-    # Check result
-    return verify_submission_result(nova)
+    # Return if we successfully clicked a button (but don't verify the result here)
+    return button_clicked
 
 def verify_submission_result(nova: NovaAct) -> bool:
     """

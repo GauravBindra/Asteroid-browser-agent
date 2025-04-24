@@ -283,8 +283,7 @@ def verify_contact_fields(nova):
                     "type": "array",
                     "items": {"type": "string"}
                 }
-            },
-            "required": ["allFieldsFilled", "missingFields"]
+            }
         }
         
         # Reset scroll position for consistent viewport
@@ -301,7 +300,7 @@ def verify_contact_fields(nova):
         )
         
         # Get structured response
-        verification_result = nova.act(verification_command, schema=verification_schema)
+        verification_result = nova.act(verification_command, schema=json.loads(json.dumps(verification_schema)))
         
         # Process structured response
         if verification_result.matches_schema:
@@ -390,29 +389,25 @@ def fill_contact_details(nova, contact_data, force_navigation=False):
             
             # Fill in joint insured name if the checkbox is checked - using enhanced function with higher retry count
             if contact_data["jointInsured"] and "jointInsuredPersonName" in contact_data:
-                logger.info("Attempting to fill Joint Insured Person Name with special targeting")
-                # First scroll reset to ensure a consistent viewport
-                scroll_reset(nova, logger)
-                
-                # Try with direct targeting command instead of enhanced_fill_text_field
-                try:
-                    special_command = (
-                        "The Joint Insured Person Name field appears right after the Joint Insured checkbox. "
-                        "First scroll down to make sure you can see this field clearly. "
-                        "Look carefully for the field labeled 'Joint Insured Person Name' - it should be visible "
-                        "since the Joint Insured checkbox is checked. "
-                        f"Click directly on this field and carefully type '{contact_data['jointInsuredPersonName']}'. "
-                        "After entering the text, click elsewhere on the form to ensure it is saved."
-                    )
-                    nova.act(special_command, max_steps=60)  # Increased max_steps for this difficult field
+                if not enhanced_fill_text_field(nova, "Joint Insured Person Name", contact_data["jointInsuredPersonName"], max_retries=5):
+                    logger.warning("Failed to fill joint insured person name despite multiple attempts")
                     
-                    logger.info("Special command for Joint Insured Person Name field completed")
-                except Exception as special_error:
-                    logger.exception(f"Special command for Joint Insured Person Name field failed: {special_error}")
-                    
-                    # Only try enhanced_fill_text_field as fallback
-                    if not enhanced_fill_text_field(nova, "Joint Insured Person Name", contact_data["jointInsuredPersonName"], max_retries=5):
-                        logger.warning("Failed to fill joint insured person name despite multiple attempts")
+                    # Special fallback for this troublesome field
+                    try:
+                        logger.info("Trying special fallback for Joint Insured Person Name field")
+                        
+                        special_command = (
+                            "The Joint Insured Person Name field appears below the Joint Insured checkbox. "
+                            "Look carefully for this field - it should be a text input field that appears "
+                            "only when the Joint Insured checkbox is checked. "
+                            f"Click directly on this field and carefully type '{contact_data['jointInsuredPersonName']}'. "
+                            "After entering the text, click elsewhere on the form to ensure it is saved."
+                        )
+                        nova.act(special_command)
+                        
+                        logger.info("Special fallback for Joint Insured Person Name field completed")
+                    except Exception as special_error:
+                        logger.exception(f"Special fallback for Joint Insured Person Name field failed: {special_error}")
         
         # Fill in number of years as landlord (text field) - using enhanced function
         if "numberOfYearsAsLandlord" in contact_data:

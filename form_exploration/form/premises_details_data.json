@@ -1,0 +1,1034 @@
+{
+  "name": "Premises Details",
+  "index": 2,
+  "elements": [
+    {
+      "type": "select",
+      "inputType": "select-one",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Property Type",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [
+        {
+          "value": "",
+          "text": "Select..."
+        },
+        {
+          "value": "Residential",
+          "text": "Residential"
+        },
+        {
+          "value": "Commercial",
+          "text": "Commercial"
+        },
+        {
+          "value": "Industrial",
+          "text": "Industrial"
+        },
+        {
+          "value": "Shop with accommodation",
+          "text": "Shop with accommodation"
+        },
+        {
+          "value": "Self-contained shop",
+          "text": "Self-contained shop"
+        },
+        {
+          "value": "Office",
+          "text": "Office"
+        },
+        {
+          "value": "Warehouse",
+          "text": "Warehouse"
+        },
+        {
+          "value": "Factory",
+          "text": "Factory"
+        }
+      ],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": null
+    },
+    {
+      "type": "select",
+      "inputType": "select-one",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Listed Status",
+      "value": "Not listed",
+      "checked": false,
+      "required": false,
+      "options": [
+        {
+          "value": "Not listed",
+          "text": "Not listed"
+        },
+        {
+          "value": "Grade I",
+          "text": "Grade I"
+        },
+        {
+          "value": "Grade II",
+          "text": "Grade II"
+        },
+        {
+          "value": "Grade II*",
+          "text": "Grade II*"
+        }
+      ],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": null
+    },
+    {
+      "type": "input",
+      "inputType": "text",
+      "id": "none",
+      "name": "none",
+      "placeholder": "Address Line 1",
+      "label": "none",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "text",
+      "id": "none",
+      "name": "none",
+      "placeholder": "Address Line 2",
+      "label": "none",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "text",
+      "id": "none",
+      "name": "none",
+      "placeholder": "Address Line 3",
+      "label": "none",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "text",
+      "id": "none",
+      "name": "none",
+      "placeholder": "City",
+      "label": "none",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "text",
+      "id": "none",
+      "name": "none",
+      "placeholder": "Postcode",
+      "label": "none",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "number",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Number of Flats in Block",
+      "value": "0",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {
+        "min": "0"
+      },
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "number",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Number of Flats to be Insured",
+      "value": "0",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {
+        "min": "0"
+      },
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "select",
+      "inputType": "select-one",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Roof Type",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [
+        {
+          "value": "",
+          "text": "Select..."
+        },
+        {
+          "value": "Slate",
+          "text": "Slate"
+        },
+        {
+          "value": "Tile",
+          "text": "Tile"
+        },
+        {
+          "value": "Concrete",
+          "text": "Concrete"
+        },
+        {
+          "value": "Metal",
+          "text": "Metal"
+        }
+      ],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": null
+    },
+    {
+      "type": "select",
+      "inputType": "select-one",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Wall Type",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [
+        {
+          "value": "",
+          "text": "Select..."
+        },
+        {
+          "value": "Brick Built",
+          "text": "Brick Built"
+        },
+        {
+          "value": "Timber Frame",
+          "text": "Timber Frame"
+        },
+        {
+          "value": "All Timber",
+          "text": "All Timber"
+        }
+      ],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": null
+    },
+    {
+      "type": "select",
+      "inputType": "select-one",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Floor Type",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [
+        {
+          "value": "",
+          "text": "Select..."
+        },
+        {
+          "value": "Brick Built",
+          "text": "Brick Built"
+        },
+        {
+          "value": "Concrete",
+          "text": "Concrete"
+        },
+        {
+          "value": "Stone",
+          "text": "Stone"
+        },
+        {
+          "value": "All Timber",
+          "text": "All Timber"
+        },
+        {
+          "value": "Other",
+          "text": "Other"
+        }
+      ],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": null
+    },
+    {
+      "type": "select",
+      "inputType": "select-one",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Stair Type",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [
+        {
+          "value": "",
+          "text": "Select..."
+        },
+        {
+          "value": "No Stairs",
+          "text": "No Stairs"
+        },
+        {
+          "value": "Brick Built",
+          "text": "Brick Built"
+        },
+        {
+          "value": "Timber Frame",
+          "text": "Timber Frame"
+        },
+        {
+          "value": "All Timber",
+          "text": "All Timber"
+        },
+        {
+          "value": "Non-Standard",
+          "text": "Non-Standard"
+        },
+        {
+          "value": "Brick and timber frame",
+          "text": "Brick and timber frame"
+        },
+        {
+          "value": "Concrete",
+          "text": "Concrete"
+        },
+        {
+          "value": "Metal",
+          "text": "Metal"
+        },
+        {
+          "value": "Stone",
+          "text": "Stone"
+        }
+      ],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": null
+    },
+    {
+      "type": "input",
+      "inputType": "number",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Number of Storeys",
+      "value": "0",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {
+        "min": "1"
+      },
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "date",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Year of Construction",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "number",
+      "id": "none",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Rebuilding Cost (\u00a3)",
+      "value": "0",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {
+        "min": "0"
+      },
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "textarea",
+      "inputType": "textarea",
+      "id": "none",
+      "name": "none",
+      "placeholder": "Please provide any additional construction details...",
+      "label": "Construction Details",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "checkbox",
+      "id": "hasFlatRoof",
+      "name": "none",
+      "placeholder": "none",
+      "label": "Has Flat Roof",
+      "value": "on",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [],
+      "isVisible": true,
+      "isDisabled": false
+    },
+    {
+      "type": "input",
+      "inputType": "text",
+      "id": "none",
+      "name": "none",
+      "placeholder": "name@email.com",
+      "label": "none",
+      "value": "none",
+      "checked": false,
+      "required": false,
+      "options": [],
+      "validation": {},
+      "aria": {},
+      "classes": [
+        "disabled:opacity-50"
+      ],
+      "isVisible": true,
+      "isDisabled": false
+    }
+  ],
+  "interactive_elements": [
+    {
+      "type": "conditional_fields",
+      "trigger": "hasFlatRoof",
+      "revealed_count": 2,
+      "fields": [
+        {
+          "type": "select",
+          "inputType": "select-one",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Property Type",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [
+            {
+              "value": "",
+              "text": "Select..."
+            },
+            {
+              "value": "Residential",
+              "text": "Residential"
+            },
+            {
+              "value": "Commercial",
+              "text": "Commercial"
+            },
+            {
+              "value": "Industrial",
+              "text": "Industrial"
+            },
+            {
+              "value": "Shop with accommodation",
+              "text": "Shop with accommodation"
+            },
+            {
+              "value": "Self-contained shop",
+              "text": "Self-contained shop"
+            },
+            {
+              "value": "Office",
+              "text": "Office"
+            },
+            {
+              "value": "Warehouse",
+              "text": "Warehouse"
+            },
+            {
+              "value": "Factory",
+              "text": "Factory"
+            }
+          ],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": null
+        },
+        {
+          "type": "select",
+          "inputType": "select-one",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Listed Status",
+          "value": "Not listed",
+          "checked": false,
+          "required": false,
+          "options": [
+            {
+              "value": "Not listed",
+              "text": "Not listed"
+            },
+            {
+              "value": "Grade I",
+              "text": "Grade I"
+            },
+            {
+              "value": "Grade II",
+              "text": "Grade II"
+            },
+            {
+              "value": "Grade II*",
+              "text": "Grade II*"
+            }
+          ],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": null
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "Address Line 1",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "Address Line 2",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "Address Line 3",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "City",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "Postcode",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "number",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Number of Flats in Block",
+          "value": "0",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {
+            "min": "0"
+          },
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "number",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Number of Flats to be Insured",
+          "value": "0",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {
+            "min": "0"
+          },
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "select",
+          "inputType": "select-one",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Roof Type",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [
+            {
+              "value": "",
+              "text": "Select..."
+            },
+            {
+              "value": "Slate",
+              "text": "Slate"
+            },
+            {
+              "value": "Tile",
+              "text": "Tile"
+            },
+            {
+              "value": "Concrete",
+              "text": "Concrete"
+            },
+            {
+              "value": "Metal",
+              "text": "Metal"
+            }
+          ],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": null
+        },
+        {
+          "type": "select",
+          "inputType": "select-one",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Wall Type",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [
+            {
+              "value": "",
+              "text": "Select..."
+            },
+            {
+              "value": "Brick Built",
+              "text": "Brick Built"
+            },
+            {
+              "value": "Timber Frame",
+              "text": "Timber Frame"
+            },
+            {
+              "value": "All Timber",
+              "text": "All Timber"
+            }
+          ],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": null
+        },
+        {
+          "type": "select",
+          "inputType": "select-one",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Floor Type",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [
+            {
+              "value": "",
+              "text": "Select..."
+            },
+            {
+              "value": "Brick Built",
+              "text": "Brick Built"
+            },
+            {
+              "value": "Concrete",
+              "text": "Concrete"
+            },
+            {
+              "value": "Stone",
+              "text": "Stone"
+            },
+            {
+              "value": "All Timber",
+              "text": "All Timber"
+            },
+            {
+              "value": "Other",
+              "text": "Other"
+            }
+          ],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": null
+        },
+        {
+          "type": "select",
+          "inputType": "select-one",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Stair Type",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [
+            {
+              "value": "",
+              "text": "Select..."
+            },
+            {
+              "value": "No Stairs",
+              "text": "No Stairs"
+            },
+            {
+              "value": "Brick Built",
+              "text": "Brick Built"
+            },
+            {
+              "value": "Timber Frame",
+              "text": "Timber Frame"
+            },
+            {
+              "value": "All Timber",
+              "text": "All Timber"
+            },
+            {
+              "value": "Non-Standard",
+              "text": "Non-Standard"
+            },
+            {
+              "value": "Brick and timber frame",
+              "text": "Brick and timber frame"
+            },
+            {
+              "value": "Concrete",
+              "text": "Concrete"
+            },
+            {
+              "value": "Metal",
+              "text": "Metal"
+            },
+            {
+              "value": "Stone",
+              "text": "Stone"
+            }
+          ],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": null
+        },
+        {
+          "type": "input",
+          "inputType": "number",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Number of Storeys",
+          "value": "0",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {
+            "min": "1"
+          },
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "date",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Year of Construction",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "number",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Rebuilding Cost (\u00a3)",
+          "value": "0",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {
+            "min": "0"
+          },
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "textarea",
+          "inputType": "textarea",
+          "id": "none",
+          "name": "none",
+          "placeholder": "Please provide any additional construction details...",
+          "label": "Construction Details",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "checkbox",
+          "id": "hasFlatRoof",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Has Flat Roof",
+          "value": "on",
+          "checked": true,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "number",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Percentage of Flat Roof",
+          "value": "0",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {
+            "min": "0",
+            "max": "100"
+          },
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "date",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Flat Roof Last Inspected",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "name@email.com",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [
+            "disabled:opacity-50"
+          ],
+          "isVisible": true,
+          "isDisabled": false
+        }
+      ]
+    }
+  ]
+}

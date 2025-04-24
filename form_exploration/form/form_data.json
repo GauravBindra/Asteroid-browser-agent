@@ -1,0 +1,1888 @@
+{
+  "url": "https://asteroid.ai/form",
+  "exploration_time": "2025-04-12T22:50:32.441312",
+  "sections": [
+    {
+      "name": "Contact Details",
+      "index": 0,
+      "elements": [
+        {
+          "type": "select",
+          "inputType": "select-one",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Title",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [
+            {
+              "value": "",
+              "text": "Select..."
+            },
+            {
+              "value": "Mr",
+              "text": "Mr"
+            },
+            {
+              "value": "Mrs",
+              "text": "Mrs"
+            },
+            {
+              "value": "Ms",
+              "text": "Ms"
+            },
+            {
+              "value": "Dr",
+              "text": "Dr"
+            },
+            {
+              "value": "Prof",
+              "text": "Prof"
+            },
+            {
+              "value": "Other",
+              "text": "Other"
+            }
+          ],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": null
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "First Name",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Last Name",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "date",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Date of Birth",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "tel",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Phone Number",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "number",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Years as Landlord",
+          "value": "0",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {
+            "min": "0"
+          },
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "checkbox",
+          "id": "jointInsured",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Joint Insured",
+          "value": "on",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "name@email.com",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [
+            "disabled:opacity-50"
+          ],
+          "isVisible": true,
+          "isDisabled": false
+        }
+      ],
+      "interactive_elements": [
+        {
+          "type": "conditional_fields",
+          "trigger": "jointInsured",
+          "revealed_count": 1,
+          "fields": [
+            {
+              "type": "select",
+              "inputType": "select-one",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Title",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [
+                {
+                  "value": "",
+                  "text": "Select..."
+                },
+                {
+                  "value": "Mr",
+                  "text": "Mr"
+                },
+                {
+                  "value": "Mrs",
+                  "text": "Mrs"
+                },
+                {
+                  "value": "Ms",
+                  "text": "Ms"
+                },
+                {
+                  "value": "Dr",
+                  "text": "Dr"
+                },
+                {
+                  "value": "Prof",
+                  "text": "Prof"
+                },
+                {
+                  "value": "Other",
+                  "text": "Other"
+                }
+              ],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": null
+            },
+            {
+              "type": "input",
+              "inputType": "text",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "First Name",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "input",
+              "inputType": "text",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Last Name",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "input",
+              "inputType": "date",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Date of Birth",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "input",
+              "inputType": "tel",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Phone Number",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "input",
+              "inputType": "number",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Years as Landlord",
+              "value": "0",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {
+                "min": "0"
+              },
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "input",
+              "inputType": "checkbox",
+              "id": "jointInsured",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Joint Insured",
+              "value": "on",
+              "checked": true,
+              "required": false,
+              "options": [],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "input",
+              "inputType": "text",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Joint Insured Person Name",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "input",
+              "inputType": "text",
+              "id": "none",
+              "name": "none",
+              "placeholder": "name@email.com",
+              "label": "none",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {},
+              "aria": {},
+              "classes": [
+                "disabled:opacity-50"
+              ],
+              "isVisible": true,
+              "isDisabled": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Business Info",
+      "index": 1,
+      "elements": [
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Business Name",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "select",
+          "inputType": "select-one",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Business Type",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [
+            {
+              "value": "",
+              "text": "Select..."
+            },
+            {
+              "value": "Sole Trader",
+              "text": "Sole Trader"
+            },
+            {
+              "value": "Public Limited Company (PLC)",
+              "text": "Public Limited Company (PLC)"
+            },
+            {
+              "value": "Partnership",
+              "text": "Partnership"
+            },
+            {
+              "value": "Limited Liability Partnership (LLP)",
+              "text": "Limited Liability Partnership (LLP)"
+            },
+            {
+              "value": "Private Limited Company (LTD)",
+              "text": "Private Limited Company (LTD)"
+            }
+          ],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": null
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Trade",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "Address Line 1",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "Address Line 2",
+          "label": "",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "Address Line 3",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "City",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "checkbox",
+          "id": "exemptFromERNCode",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Exempt from ERN Code",
+          "value": "on",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "123/AB12345",
+          "label": "ERN Tax Code",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "name@email.com",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [
+            "disabled:opacity-50"
+          ],
+          "isVisible": true,
+          "isDisabled": false
+        }
+      ],
+      "interactive_elements": []
+    },
+    {
+      "name": "Premises Details",
+      "index": 2,
+      "elements": [
+        {
+          "type": "select",
+          "inputType": "select-one",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Property Type",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [
+            {
+              "value": "",
+              "text": "Select..."
+            },
+            {
+              "value": "Residential",
+              "text": "Residential"
+            },
+            {
+              "value": "Commercial",
+              "text": "Commercial"
+            },
+            {
+              "value": "Industrial",
+              "text": "Industrial"
+            },
+            {
+              "value": "Shop with accommodation",
+              "text": "Shop with accommodation"
+            },
+            {
+              "value": "Self-contained shop",
+              "text": "Self-contained shop"
+            },
+            {
+              "value": "Office",
+              "text": "Office"
+            },
+            {
+              "value": "Warehouse",
+              "text": "Warehouse"
+            },
+            {
+              "value": "Factory",
+              "text": "Factory"
+            }
+          ],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": null
+        },
+        {
+          "type": "select",
+          "inputType": "select-one",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Listed Status",
+          "value": "Not listed",
+          "checked": false,
+          "required": false,
+          "options": [
+            {
+              "value": "Not listed",
+              "text": "Not listed"
+            },
+            {
+              "value": "Grade I",
+              "text": "Grade I"
+            },
+            {
+              "value": "Grade II",
+              "text": "Grade II"
+            },
+            {
+              "value": "Grade II*",
+              "text": "Grade II*"
+            }
+          ],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": null
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "Address Line 1",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "Address Line 2",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "Address Line 3",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "City",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "Postcode",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "number",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Number of Flats in Block",
+          "value": "0",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {
+            "min": "0"
+          },
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "number",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Number of Flats to be Insured",
+          "value": "0",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {
+            "min": "0"
+          },
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "select",
+          "inputType": "select-one",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Roof Type",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [
+            {
+              "value": "",
+              "text": "Select..."
+            },
+            {
+              "value": "Slate",
+              "text": "Slate"
+            },
+            {
+              "value": "Tile",
+              "text": "Tile"
+            },
+            {
+              "value": "Concrete",
+              "text": "Concrete"
+            },
+            {
+              "value": "Metal",
+              "text": "Metal"
+            }
+          ],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": null
+        },
+        {
+          "type": "select",
+          "inputType": "select-one",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Wall Type",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [
+            {
+              "value": "",
+              "text": "Select..."
+            },
+            {
+              "value": "Brick Built",
+              "text": "Brick Built"
+            },
+            {
+              "value": "Timber Frame",
+              "text": "Timber Frame"
+            },
+            {
+              "value": "All Timber",
+              "text": "All Timber"
+            }
+          ],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": null
+        },
+        {
+          "type": "select",
+          "inputType": "select-one",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Floor Type",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [
+            {
+              "value": "",
+              "text": "Select..."
+            },
+            {
+              "value": "Brick Built",
+              "text": "Brick Built"
+            },
+            {
+              "value": "Concrete",
+              "text": "Concrete"
+            },
+            {
+              "value": "Stone",
+              "text": "Stone"
+            },
+            {
+              "value": "All Timber",
+              "text": "All Timber"
+            },
+            {
+              "value": "Other",
+              "text": "Other"
+            }
+          ],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": null
+        },
+        {
+          "type": "select",
+          "inputType": "select-one",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Stair Type",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [
+            {
+              "value": "",
+              "text": "Select..."
+            },
+            {
+              "value": "No Stairs",
+              "text": "No Stairs"
+            },
+            {
+              "value": "Brick Built",
+              "text": "Brick Built"
+            },
+            {
+              "value": "Timber Frame",
+              "text": "Timber Frame"
+            },
+            {
+              "value": "All Timber",
+              "text": "All Timber"
+            },
+            {
+              "value": "Non-Standard",
+              "text": "Non-Standard"
+            },
+            {
+              "value": "Brick and timber frame",
+              "text": "Brick and timber frame"
+            },
+            {
+              "value": "Concrete",
+              "text": "Concrete"
+            },
+            {
+              "value": "Metal",
+              "text": "Metal"
+            },
+            {
+              "value": "Stone",
+              "text": "Stone"
+            }
+          ],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": null
+        },
+        {
+          "type": "input",
+          "inputType": "number",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Number of Storeys",
+          "value": "0",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {
+            "min": "1"
+          },
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "date",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Year of Construction",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "number",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Rebuilding Cost (\u00a3)",
+          "value": "0",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {
+            "min": "0"
+          },
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "textarea",
+          "inputType": "textarea",
+          "id": "none",
+          "name": "none",
+          "placeholder": "Please provide any additional construction details...",
+          "label": "Construction Details",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "checkbox",
+          "id": "hasFlatRoof",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Has Flat Roof",
+          "value": "on",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "name@email.com",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [
+            "disabled:opacity-50"
+          ],
+          "isVisible": true,
+          "isDisabled": false
+        }
+      ],
+      "interactive_elements": [
+        {
+          "type": "conditional_fields",
+          "trigger": "hasFlatRoof",
+          "revealed_count": 2,
+          "fields": [
+            {
+              "type": "select",
+              "inputType": "select-one",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Property Type",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [
+                {
+                  "value": "",
+                  "text": "Select..."
+                },
+                {
+                  "value": "Residential",
+                  "text": "Residential"
+                },
+                {
+                  "value": "Commercial",
+                  "text": "Commercial"
+                },
+                {
+                  "value": "Industrial",
+                  "text": "Industrial"
+                },
+                {
+                  "value": "Shop with accommodation",
+                  "text": "Shop with accommodation"
+                },
+                {
+                  "value": "Self-contained shop",
+                  "text": "Self-contained shop"
+                },
+                {
+                  "value": "Office",
+                  "text": "Office"
+                },
+                {
+                  "value": "Warehouse",
+                  "text": "Warehouse"
+                },
+                {
+                  "value": "Factory",
+                  "text": "Factory"
+                }
+              ],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": null
+            },
+            {
+              "type": "select",
+              "inputType": "select-one",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Listed Status",
+              "value": "Not listed",
+              "checked": false,
+              "required": false,
+              "options": [
+                {
+                  "value": "Not listed",
+                  "text": "Not listed"
+                },
+                {
+                  "value": "Grade I",
+                  "text": "Grade I"
+                },
+                {
+                  "value": "Grade II",
+                  "text": "Grade II"
+                },
+                {
+                  "value": "Grade II*",
+                  "text": "Grade II*"
+                }
+              ],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": null
+            },
+            {
+              "type": "input",
+              "inputType": "text",
+              "id": "none",
+              "name": "none",
+              "placeholder": "Address Line 1",
+              "label": "none",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "input",
+              "inputType": "text",
+              "id": "none",
+              "name": "none",
+              "placeholder": "Address Line 2",
+              "label": "none",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "input",
+              "inputType": "text",
+              "id": "none",
+              "name": "none",
+              "placeholder": "Address Line 3",
+              "label": "none",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "input",
+              "inputType": "text",
+              "id": "none",
+              "name": "none",
+              "placeholder": "City",
+              "label": "none",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "input",
+              "inputType": "text",
+              "id": "none",
+              "name": "none",
+              "placeholder": "Postcode",
+              "label": "none",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "input",
+              "inputType": "number",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Number of Flats in Block",
+              "value": "0",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {
+                "min": "0"
+              },
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "input",
+              "inputType": "number",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Number of Flats to be Insured",
+              "value": "0",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {
+                "min": "0"
+              },
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "select",
+              "inputType": "select-one",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Roof Type",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [
+                {
+                  "value": "",
+                  "text": "Select..."
+                },
+                {
+                  "value": "Slate",
+                  "text": "Slate"
+                },
+                {
+                  "value": "Tile",
+                  "text": "Tile"
+                },
+                {
+                  "value": "Concrete",
+                  "text": "Concrete"
+                },
+                {
+                  "value": "Metal",
+                  "text": "Metal"
+                }
+              ],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": null
+            },
+            {
+              "type": "select",
+              "inputType": "select-one",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Wall Type",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [
+                {
+                  "value": "",
+                  "text": "Select..."
+                },
+                {
+                  "value": "Brick Built",
+                  "text": "Brick Built"
+                },
+                {
+                  "value": "Timber Frame",
+                  "text": "Timber Frame"
+                },
+                {
+                  "value": "All Timber",
+                  "text": "All Timber"
+                }
+              ],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": null
+            },
+            {
+              "type": "select",
+              "inputType": "select-one",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Floor Type",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [
+                {
+                  "value": "",
+                  "text": "Select..."
+                },
+                {
+                  "value": "Brick Built",
+                  "text": "Brick Built"
+                },
+                {
+                  "value": "Concrete",
+                  "text": "Concrete"
+                },
+                {
+                  "value": "Stone",
+                  "text": "Stone"
+                },
+                {
+                  "value": "All Timber",
+                  "text": "All Timber"
+                },
+                {
+                  "value": "Other",
+                  "text": "Other"
+                }
+              ],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": null
+            },
+            {
+              "type": "select",
+              "inputType": "select-one",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Stair Type",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [
+                {
+                  "value": "",
+                  "text": "Select..."
+                },
+                {
+                  "value": "No Stairs",
+                  "text": "No Stairs"
+                },
+                {
+                  "value": "Brick Built",
+                  "text": "Brick Built"
+                },
+                {
+                  "value": "Timber Frame",
+                  "text": "Timber Frame"
+                },
+                {
+                  "value": "All Timber",
+                  "text": "All Timber"
+                },
+                {
+                  "value": "Non-Standard",
+                  "text": "Non-Standard"
+                },
+                {
+                  "value": "Brick and timber frame",
+                  "text": "Brick and timber frame"
+                },
+                {
+                  "value": "Concrete",
+                  "text": "Concrete"
+                },
+                {
+                  "value": "Metal",
+                  "text": "Metal"
+                },
+                {
+                  "value": "Stone",
+                  "text": "Stone"
+                }
+              ],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": null
+            },
+            {
+              "type": "input",
+              "inputType": "number",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Number of Storeys",
+              "value": "0",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {
+                "min": "1"
+              },
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "input",
+              "inputType": "date",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Year of Construction",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "input",
+              "inputType": "number",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Rebuilding Cost (\u00a3)",
+              "value": "0",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {
+                "min": "0"
+              },
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "textarea",
+              "inputType": "textarea",
+              "id": "none",
+              "name": "none",
+              "placeholder": "Please provide any additional construction details...",
+              "label": "Construction Details",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "input",
+              "inputType": "checkbox",
+              "id": "hasFlatRoof",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Has Flat Roof",
+              "value": "on",
+              "checked": true,
+              "required": false,
+              "options": [],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "input",
+              "inputType": "number",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Percentage of Flat Roof",
+              "value": "0",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {
+                "min": "0",
+                "max": "100"
+              },
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "input",
+              "inputType": "date",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Flat Roof Last Inspected",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "input",
+              "inputType": "text",
+              "id": "none",
+              "name": "none",
+              "placeholder": "name@email.com",
+              "label": "none",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {},
+              "aria": {},
+              "classes": [
+                "disabled:opacity-50"
+              ],
+              "isVisible": true,
+              "isDisabled": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Security & Safety",
+      "index": 3,
+      "elements": [
+        {
+          "type": "input",
+          "inputType": "checkbox",
+          "id": "cctv",
+          "name": "none",
+          "placeholder": "none",
+          "label": "CCTV Installed",
+          "value": "on",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": false
+        },
+        {
+          "type": "select",
+          "inputType": "select-one",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Door Security Type",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [
+            {
+              "value": "",
+              "text": "Select..."
+            },
+            {
+              "value": "No Special Security",
+              "text": "No Special Security"
+            },
+            {
+              "value": "Mortise Deadlock - 5 Or More Levers BS3621",
+              "text": "Mortise Deadlock - 5 Or More Levers BS3621"
+            },
+            {
+              "value": "Mortise Deadlock - 3 Lever",
+              "text": "Mortise Deadlock - 3 Lever"
+            },
+            {
+              "value": "Mortise Deadlock - 4 Lever",
+              "text": "Mortise Deadlock - 4 Lever"
+            }
+          ],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": null
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "name@email.com",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [
+            "disabled:opacity-50"
+          ],
+          "isVisible": true,
+          "isDisabled": false
+        }
+      ],
+      "interactive_elements": [
+        {
+          "type": "conditional_fields",
+          "trigger": "cctv",
+          "revealed_count": 2,
+          "fields": [
+            {
+              "type": "input",
+              "inputType": "checkbox",
+              "id": "cctv",
+              "name": "none",
+              "placeholder": "none",
+              "label": "CCTV Installed",
+              "value": "on",
+              "checked": true,
+              "required": false,
+              "options": [],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": false
+            },
+            {
+              "type": "select",
+              "inputType": "select-one",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "CCTV Type",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [
+                {
+                  "value": "",
+                  "text": "Select..."
+                },
+                {
+                  "value": "Recorded only",
+                  "text": "Recorded only"
+                },
+                {
+                  "value": "Recorded and monitored by policy holder",
+                  "text": "Recorded and monitored by policy holder"
+                },
+                {
+                  "value": "Recorded and monitored by a professional monitoring company",
+                  "text": "Recorded and monitored by a professional monitoring company"
+                }
+              ],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": null
+            },
+            {
+              "type": "select",
+              "inputType": "select-one",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "CCTV Coverage",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [
+                {
+                  "value": "",
+                  "text": "Select..."
+                },
+                {
+                  "value": "Internal only",
+                  "text": "Internal only"
+                },
+                {
+                  "value": "External only",
+                  "text": "External only"
+                },
+                {
+                  "value": "Both",
+                  "text": "Both"
+                }
+              ],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": null
+            },
+            {
+              "type": "select",
+              "inputType": "select-one",
+              "id": "none",
+              "name": "none",
+              "placeholder": "none",
+              "label": "Door Security Type",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [
+                {
+                  "value": "",
+                  "text": "Select..."
+                },
+                {
+                  "value": "No Special Security",
+                  "text": "No Special Security"
+                },
+                {
+                  "value": "Mortise Deadlock - 5 Or More Levers BS3621",
+                  "text": "Mortise Deadlock - 5 Or More Levers BS3621"
+                },
+                {
+                  "value": "Mortise Deadlock - 3 Lever",
+                  "text": "Mortise Deadlock - 3 Lever"
+                },
+                {
+                  "value": "Mortise Deadlock - 4 Lever",
+                  "text": "Mortise Deadlock - 4 Lever"
+                }
+              ],
+              "validation": {},
+              "aria": {},
+              "classes": [],
+              "isVisible": true,
+              "isDisabled": null
+            },
+            {
+              "type": "input",
+              "inputType": "text",
+              "id": "none",
+              "name": "none",
+              "placeholder": "name@email.com",
+              "label": "none",
+              "value": "none",
+              "checked": false,
+              "required": false,
+              "options": [],
+              "validation": {},
+              "aria": {},
+              "classes": [
+                "disabled:opacity-50"
+              ],
+              "isVisible": true,
+              "isDisabled": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Coverage Options",
+      "index": 4,
+      "elements": [
+        {
+          "type": "button",
+          "inputType": "submit",
+          "id": "none",
+          "name": "none",
+          "placeholder": "none",
+          "label": "Previous",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [],
+          "isVisible": true,
+          "isDisabled": null
+        },
+        {
+          "type": "input",
+          "inputType": "text",
+          "id": "none",
+          "name": "none",
+          "placeholder": "name@email.com",
+          "label": "none",
+          "value": "none",
+          "checked": false,
+          "required": false,
+          "options": [],
+          "validation": {},
+          "aria": {},
+          "classes": [
+            "disabled:opacity-50"
+          ],
+          "isVisible": true,
+          "isDisabled": false
+        }
+      ],
+      "interactive_elements": []
+    }
+  ]
+}

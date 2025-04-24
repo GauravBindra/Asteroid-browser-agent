@@ -1,0 +1,127 @@
+[
+  {
+    "type": "select",
+    "inputType": "select-one",
+    "id": "none",
+    "name": "none",
+    "placeholder": "none",
+    "label": "Title",
+    "value": "none",
+    "checked": false,
+    "required": false,
+    "options": [
+      {
+        "value": "",
+        "text": "Select..."
+      },
+      {
+        "value": "Mr",
+        "text": "Mr"
+      },
+      {
+        "value": "Mrs",
+        "text": "Mrs"
+      },
+      {
+        "value": "Ms",
+        "text": "Ms"
+      },
+      {
+        "value": "Dr",
+        "text": "Dr"
+      },
+      {
+        "value": "Prof",
+        "text": "Prof"
+      },
+      {
+        "value": "Other",
+        "text": "Other"
+      }
+    ]
+  },
+  {
+    "type": "input",
+    "inputType": "text",
+    "id": "none",
+    "name": "none",
+    "placeholder": "none",
+    "label": "First Name",
+    "value": "none",
+    "checked": false,
+    "required": false,
+    "options": []
+  },
+  {
+    "type": "input",
+    "inputType": "text",
+    "id": "none",
+    "name": "none",
+    "placeholder": "none",
+    "label": "Last Name",
+    "value": "none",
+    "checked": false,
+    "required": false,
+    "options": []
+  },
+  {
+    "type": "input",
+    "inputType": "date",
+    "id": "none",
+    "name": "none",
+    "placeholder": "none",
+    "label": "Date of Birth",
+    "value": "none",
+    "checked": false,
+    "required": false,
+    "options": []
+  },
+  {
+    "type": "input",
+    "inputType": "tel",
+    "id": "none",
+    "name": "none",
+    "placeholder": "none",
+    "label": "Phone Number",
+    "value": "none",
+    "checked": false,
+    "required": false,
+    "options": []
+  },
+  {
+    "type": "input",
+    "inputType": "number",
+    "id": "none",
+    "name": "none",
+    "placeholder": "none",
+    "label": "Years as Landlord",
+    "value": "0",
+    "checked": false,
+    "required": false,
+    "options": []
+  },
+  {
+    "type": "input",
+    "inputType": "checkbox",
+    "id": "jointInsured",
+    "name": "none",
+    "placeholder": "none",
+    "label": "Joint Insured",
+    "value": "on",
+    "checked": false,
+    "required": false,
+    "options": []
+  },
+  {
+    "type": "input",
+    "inputType": "text",
+    "id": "none",
+    "name": "none",
+    "placeholder": "name@email.com",
+    "label": "none",
+    "value": "none",
+    "checked": false,
+    "required": false,
+    "options": []
+  }
+]
