@@ -61,21 +61,39 @@ def automate_form(data_file_path=None, form_url=None):
     
     # Load form data
     try:
-        if data_file_path is None:
-            script_dir = os.path.dirname(os.path.abspath(__file__))
-            parent_dir = os.path.dirname(script_dir)
-            data_file_path = os.path.join(parent_dir, "hard_form_data.json")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        parent_dir = os.path.dirname(script_dir)
         
-        # Check if file exists
+        # If data_file_path is provided, clean it up (remove any leading/trailing whitespace)
+        if data_file_path is not None:
+            data_file_path = data_file_path.strip()
+            logger.info(f"Using provided data file path: {data_file_path}")
+        else:
+            # Default path is now hard_form_data_actual.json
+            data_file_path = os.path.join(script_dir, "hard_form_data_actual.json")
+            logger.info(f"No path provided, using default: {data_file_path}")
+        
+        # Check if file exists at the provided/default path
         if not os.path.exists(data_file_path):
             logger.warning(f"File not found at {data_file_path}, checking alternative locations")
-            # Try different locations
-            if os.path.exists(os.path.join(script_dir, "hard_form_data.json")):
-                data_file_path = os.path.join(script_dir, "hard_form_data.json")
-            elif os.path.exists(os.path.join(parent_dir, "hard_form_data_actual.json")):
-                data_file_path = os.path.join(parent_dir, "hard_form_data_actual.json")
-            elif os.path.exists(os.path.join(script_dir, "hard_form_data_actual.json")):
-                data_file_path = os.path.join(script_dir, "hard_form_data_actual.json")
+            
+            # Try different potential locations in a specific order - prioritize actual data files
+            potential_paths = [
+                os.path.join(script_dir, "hard_form_data_actual.json"),  # First try actual in current dir
+                os.path.join(parent_dir, "hard_form_data_actual.json"),  # Then actual in parent dir
+                os.path.join(parent_dir, "data", "hard_form_data_actual.json"),  # Try in data subdirectory
+                os.path.join(script_dir, "hard_form_data.json"),         # Then standard in current dir
+                os.path.join(parent_dir, "hard_form_data.json")          # Finally standard in parent dir
+            ]
+            
+            for potential_path in potential_paths:
+                if os.path.exists(potential_path):
+                    data_file_path = potential_path
+                    logger.info(f"Found data file at: {data_file_path}")
+                    break
+            else:
+                # If no file is found after trying all locations
+                raise FileNotFoundError(f"Could not find form data file in any expected location")
                 
         form_data = load_json_data(data_file_path)
         logger.info(f"Successfully loaded form data from {data_file_path}")
@@ -152,19 +170,30 @@ def automate_form(data_file_path=None, form_url=None):
                     logger.info(f"Processing section {current_section} with data from {json_sections}")
                     
                     # Call the appropriate enhanced handler based on the current form section
+                    # Each handler now returns a tuple (success, failed_fields)
+                    failed_fields = []
+                    
                     if current_section == "Contact Details":
-                        success = handle_contact_details(nova, form_data)
+                        success, section_failed_fields = handle_contact_details(nova, form_data)
+                        failed_fields.extend(section_failed_fields)
                     elif current_section == "Business Info":
-                        success = handle_business_info(nova, form_data)
+                        success, section_failed_fields = handle_business_info(nova, form_data)
+                        failed_fields.extend(section_failed_fields)
                     elif current_section == "Premises Details":
-                        success = handle_premises_details(nova, form_data)
+                        success, section_failed_fields = handle_premises_details(nova, form_data)
+                        failed_fields.extend(section_failed_fields)
                     elif current_section == "Security & Safety":
-                        success = handle_security_safety(nova, form_data)
+                        success, section_failed_fields = handle_security_safety(nova, form_data)
+                        failed_fields.extend(section_failed_fields)
                     elif current_section == "Coverage Options":
                         success = handle_coverage_options(nova, form_data)
                     else:
                         logger.warning(f"No handler implemented for section '{current_section}', skipping")
                         success = click_button(nova, "Next")
+                        
+                    # Log any failed fields
+                    if failed_fields:
+                        logger.warning(f"Section '{current_section}' had {len(failed_fields)} fields that failed verification")
                     
                     if not success:
                         logger.error(f"Failed to process section '{current_section}'")
@@ -227,7 +256,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--json", 
         dest="json_file", 
-        help="Path to the JSON file containing form data (default: hard_form_data.json in parent directory)",
+        help="Path to the JSON file containing form data (default: hard_form_data_actual.json in script directory)",
         default=None
     )
     parser.add_argument(
@@ -258,8 +287,19 @@ if __name__ == "__main__":
     logger = logging.getLogger("nova_form_automation")
     logger.info(f"Logging to {log_file}")
     
+    # Clean up inputs if they contain leading/trailing whitespace
+    json_file_path = args.json_file.strip() if args.json_file else None
+    form_url = args.form_url.strip() if args.form_url else HARD_FORM_URL
+    
+    # Log the actual parameters being used
+    if json_file_path:
+        logger.info(f"Using JSON file from command line: {json_file_path}")
+    
+    if form_url != HARD_FORM_URL:
+        logger.info(f"Using custom form URL: {form_url}")
+    
     # Run the form automation with the specified JSON file and form URL
-    success = automate_form(args.json_file, args.form_url)
+    success = automate_form(json_file_path, form_url)
     
     # Exit with appropriate code
     sys.exit(0 if success else 1)

@@ -7,8 +7,9 @@ import logging
 import os
 import sys
 import time
+from typing import List, Dict, Any, Tuple
 from nova_act import NovaAct
-from field_detection import field_exists
+from field_detection import field_exists, get_form_label
 from field_dependencies import should_process_field
 from fill_fields import (
     fill_text_field,
@@ -20,13 +21,13 @@ from fill_fields import (
 from utils_final import load_json_data
 from navigation import click_button, navigate_to_section
 from config import FIELD_TYPES
-from verify import verify_field, verify_section
+from verify3 import verify_field, verify_section
 from error_handler import retry_failed_fields, navigate_to_next_section
 
 # Initialize logger
 logger = logging.getLogger("nova_form_automation")
 
-def handle_business_info(nova: NovaAct, form_data: dict) -> bool:
+def handle_business_info(nova: NovaAct, form_data: dict) -> Tuple[bool, List[Dict[str, Any]]]:
     """
     Handle the Business Info section of the form with comprehensive verification.
     
@@ -35,7 +36,9 @@ def handle_business_info(nova: NovaAct, form_data: dict) -> bool:
         form_data: Dictionary containing form data
         
     Returns:
-        bool: True if all fields were processed successfully
+        Tuple[bool, List[Dict[str, Any]]]: 
+            - Boolean success status
+            - List of failed fields with details for targeted verification
     """
     logger.info("Processing Business Info section with comprehensive verification")
     section_name = "Business Info"
@@ -43,10 +46,13 @@ def handle_business_info(nova: NovaAct, form_data: dict) -> bool:
     # Extract business info data
     if "business" not in form_data:
         logger.error("Business info data not found in form data")
-        return False
+        return False, []
     
     business_data = form_data["business"]
     success = True
+    
+    # Track failed fields during initial filling
+    failed_fields = []
     
     # Process each field in the business data
     for key, value in business_data.items():
@@ -57,30 +63,11 @@ def handle_business_info(nova: NovaAct, form_data: dict) -> bool:
             if not address_success:
                 logger.warning("Failed to fill business address fields")
                 success = False
+                # Since address is a special case, we don't add it to failed_fields
             continue
         
-        # Special case handling for specific business fields
-        if key == "name":
-            label = "Business Name"
-        elif key == "type":
-            label = "Business Type"
-        else:
-            # Standard conversion for other fields: camelCase -> Spaced Words
-            label_words = []
-            current_word = ""
-            
-            for char in key:
-                if char.isupper():
-                    if current_word:
-                        label_words.append(current_word)
-                    current_word = char
-                else:
-                    current_word += char
-            
-            if current_word:
-                label_words.append(current_word)
-            
-            label = " ".join(word.capitalize() for word in label_words)
+        # Use centralized get_form_label function with section context
+        label = get_form_label(key, section_name)
         
         # Check if field is in the mapping
         if key not in FIELD_TYPES:
@@ -94,6 +81,17 @@ def handle_business_info(nova: NovaAct, form_data: dict) -> bool:
         # Check if field exists in the form
         if not field_exists(nova, label, section_name, field_type):
             logger.warning(f"Field '{label}' does not exist in the form, skipping")
+            # Add to failed fields for later targeted verification
+            failed_fields.append({
+                "section": section_name,
+                "json_section": "business",
+                "key": key,
+                "label": label,
+                "expected_value": value,
+                "field_type": field_type,
+                "reason": "field_not_found"
+            })
+            success = False
             continue
         
         # Check if field should be processed based on dependencies
@@ -137,18 +135,28 @@ def handle_business_info(nova: NovaAct, form_data: dict) -> bool:
         
         if not field_filled:
             logger.warning(f"Could not fill field '{label}' correctly after {max_attempts} attempts")
+            # Add to failed fields for later targeted verification
+            failed_fields.append({
+                "section": section_name,
+                "json_section": "business",
+                "key": key,
+                "label": label,
+                "expected_value": value,
+                "field_type": field_type
+            })
+            success = False
     
-    # After filling all fields, perform section verification
-    logger.info("Performing comprehensive section verification")
-    failed_fields = verify_section(nova, section_name, form_data)
-    
+    # Only verify fields that failed during initial filling
     if failed_fields:
-        logger.warning(f"Found {len(failed_fields)} fields that failed verification")
+        logger.info(f"Performing targeted verification of {len(failed_fields)} failed Business Info fields")
+        still_failed_fields = verify_section(nova, section_name, form_data, specific_fields=failed_fields)
         
-        # Retry filling failed fields
-        retry_failed_fields(nova, failed_fields)
+        if still_failed_fields:
+            logger.warning(f"{len(still_failed_fields)} fields still failed after specialized verification")
+        else:
+            logger.info("All previously failed fields now verify successfully with specialized verification")
     else:
-        logger.info("All fields verified successfully")
+        logger.info("All Business Info fields verified successfully during initial filling")
     
     # After filling all fields, try to proceed to next section
     logger.info("Attempting to proceed to next section")
@@ -162,10 +170,10 @@ def handle_business_info(nova: NovaAct, form_data: dict) -> bool:
         
         if not nav_success:
             logger.error("Failed to navigate to next section")
-            return False
+            return False, failed_fields
     
     logger.info(f"Business Info section processed successfully")
-    return True
+    return success, failed_fields
 
 # For testing
 if __name__ == "__main__":
@@ -198,15 +206,17 @@ if __name__ == "__main__":
             logger.info("Successfully navigated to Business Info section")
                 
             # Now process Business Info section with verification
-            result = handle_business_info(nova, data)
+            success, failed_fields = handle_business_info(nova, data)
             
-            if result:
+            if success:
                 logger.info("✅ Business Info section processed successfully")
             else:
                 logger.error("❌ Business Info section processed with errors")
+                if failed_fields:
+                    logger.warning(f"There were {len(failed_fields)} fields that failed verification")
             
     except Exception as e:
         logger.exception(f"Error in Business Info handler test: {e}")
         sys.exit(1)
     
-    sys.exit(0 if result else 1)
+    sys.exit(0 if success else 1)

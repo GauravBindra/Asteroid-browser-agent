@@ -7,6 +7,7 @@ including Property Identity and Construction Details subsections.
 import logging
 import sys
 import time
+from typing import List, Dict, Any, Tuple
 from nova_act import NovaAct
 from field_detection import field_exists
 from field_dependencies import should_process_field
@@ -20,13 +21,13 @@ from fill_fields import (
 from utils_final import load_json_data
 from navigation import click_button, navigate_to_section
 from config import FIELD_TYPES
-from verify import verify_field, verify_section
+from verify3 import verify_field, verify_section
 from error_handler import retry_failed_fields, navigate_to_next_section
 
 # Initialize logger
 logger = logging.getLogger("nova_form_automation")
 
-def handle_premises_details(nova: NovaAct, form_data: dict) -> bool:
+def handle_premises_details(nova: NovaAct, form_data: dict) -> Tuple[bool, List[Dict[str, Any]]]:
     """
     Handle the Premises Details section of the form with comprehensive verification.
     
@@ -38,7 +39,9 @@ def handle_premises_details(nova: NovaAct, form_data: dict) -> bool:
         form_data: Dictionary containing form data
         
     Returns:
-        bool: True if all fields were processed successfully
+        Tuple[bool, List[Dict[str, Any]]]: 
+            - Boolean success status
+            - List of failed fields with details for targeted verification
     """
     logger.info("Processing Premises Details section with comprehensive verification")
     section_name = "Premises Details"
@@ -46,21 +49,44 @@ def handle_premises_details(nova: NovaAct, form_data: dict) -> bool:
     # Extract premises details data
     if "premises" not in form_data:
         logger.error("Premises details data not found in form data")
-        return False
+        return False, []
     
     premises_data = form_data["premises"]
     success = True
     
-    # First, process the property identity subsection
+    # Initialize lists to track failed fields from each subsection
+    identity_failed_fields = []
+    construction_failed_fields = []
+    
+    # Process the property identity subsection
     if "identity" not in premises_data:
         logger.error("Property Identity subsection data not found")
         success = False
     else:
         identity_data = premises_data["identity"]
-        identity_success = process_property_identity(nova, identity_data, section_name)
-        if not identity_success:
-            logger.warning("Some Property Identity fields could not be filled")
+        
+        # Track failed fields during initial filling
+        identity_failed_fields = []
+        
+        # First fill all fields in the Identity subsection
+        logger.info("Processing Property Identity subsection")
+        identity_success, subsection_failed_fields = process_property_identity(nova, identity_data, section_name)
+        if subsection_failed_fields:
+            logger.warning(f"Some Property Identity fields ({len(subsection_failed_fields)}) could not be filled properly")
+            identity_failed_fields.extend(subsection_failed_fields)
             success = False
+        
+        # Only verify the specific fields that failed during processing
+        if identity_failed_fields:
+            logger.info(f"Performing targeted verification of {len(identity_failed_fields)} failed Identity fields")
+            still_failed_fields = verify_section(nova, section_name, form_data, specific_fields=identity_failed_fields)
+            
+            if still_failed_fields:
+                logger.warning(f"{len(still_failed_fields)} fields still failed after specialized verification")
+            else:
+                logger.info("All previously failed fields now verify successfully with specialized verification")
+        else:
+            logger.info("All Property Identity fields verified successfully during initial filling")
     
     # Then, process the construction details subsection 
     if "construction" not in premises_data:
@@ -68,22 +94,29 @@ def handle_premises_details(nova: NovaAct, form_data: dict) -> bool:
         success = False
     else:
         construction_data = premises_data["construction"]
-        construction_success = process_construction_details(nova, construction_data, section_name)
-        if not construction_success:
-            logger.warning("Some Construction Details fields could not be filled")
-            success = False
-    
-    # After filling all fields, perform section verification
-    logger.info("Performing comprehensive section verification")
-    failed_fields = verify_section(nova, section_name, form_data)
-    
-    if failed_fields:
-        logger.warning(f"Found {len(failed_fields)} fields that failed verification")
         
-        # Retry filling failed fields
-        retry_failed_fields(nova, failed_fields)
-    else:
-        logger.info("All fields verified successfully")
+        # Track failed fields during initial filling
+        construction_failed_fields = []
+        
+        # Fill all fields in the Construction subsection
+        logger.info("Processing Construction Details subsection")
+        construction_success, subsection_failed_fields = process_construction_details(nova, construction_data, section_name)
+        if subsection_failed_fields:
+            logger.warning(f"Some Construction Details fields ({len(subsection_failed_fields)}) could not be filled properly")
+            construction_failed_fields.extend(subsection_failed_fields)
+            success = False
+        
+        # Only verify the specific fields that failed during processing
+        if construction_failed_fields:
+            logger.info(f"Performing targeted verification of {len(construction_failed_fields)} failed Construction fields")
+            still_failed_fields = verify_section(nova, section_name, form_data, specific_fields=construction_failed_fields)
+            
+            if still_failed_fields:
+                logger.warning(f"{len(still_failed_fields)} fields still failed after specialized verification")
+            else:
+                logger.info("All previously failed fields now verify successfully with specialized verification")
+        else:
+            logger.info("All Construction Details fields verified successfully during initial filling")
     
     # After filling all fields, try to proceed to next section
     logger.info("Attempting to proceed to next section")
@@ -97,12 +130,12 @@ def handle_premises_details(nova: NovaAct, form_data: dict) -> bool:
         
         if not nav_success:
             logger.error("Failed to navigate to next section")
-            return False
+            return False, identity_failed_fields + construction_failed_fields
     
     logger.info(f"Premises Details section processed successfully")
-    return True
+    return success, identity_failed_fields + construction_failed_fields
 
-def process_property_identity(nova: NovaAct, identity_data: dict, section_name: str) -> bool:
+def process_property_identity(nova: NovaAct, identity_data: dict, section_name: str) -> Tuple[bool, List[Dict[str, Any]]]:
     """
     Process the Property Identity subsection fields with immediate verification.
     
@@ -112,65 +145,34 @@ def process_property_identity(nova: NovaAct, identity_data: dict, section_name: 
         section_name: Name of the parent section
         
     Returns:
-        bool: True if all fields were processed successfully
+        Tuple[bool, List[Dict[str, Any]]]: 
+            - Boolean success status
+            - List of failed fields with details for targeted verification
     """
     logger.info("Processing Property Identity subsection")
     subsection_name = "Property Identity"
     subsection_success = True
+    failed_fields = []  # Track fields that failed to fill or verify
     
     # Process each field in the identity data in the order they appear
     for key, value in identity_data.items():
-        # Special handling for address field which is a nested object
+        # Handle address field which is a nested object
         if key == "address" and isinstance(value, dict):
             logger.info("Processing premises address fields")
             
-            # First, handle the City field specifically
-            if "city" in value and value["city"]:
-                logger.info(f"Filling City field first with '{value['city']}'")
-                city_success = fill_text_field(nova, "City", value["city"])
-                if not city_success:
-                    logger.warning("Failed to fill City field")
-                    subsection_success = False
-                else:
-                    # Immediately verify City field
-                    logger.info(f"Verifying field 'City'")
-                    verification_success = verify_field(nova, "City", value["city"], "text")
-                    if not verification_success:
-                        logger.warning(f"City field verification failed")
-            
-            # Then handle the rest of the address fields
-            address_data = value.copy()  # Create a copy of the address data
-            if "city" in address_data:
-                del address_data["city"]  # Remove city as we've already handled it
-                
-            address_success = fill_address_fields(nova, section_name, address_data)
+            # Use standard fill_address_fields function which now prioritizes City field
+            address_success = fill_address_fields(nova, section_name, value)
             if not address_success:
-                logger.warning("Failed to fill remaining premises address fields")
+                logger.warning("Failed to fill premises address fields")
                 subsection_success = False
+                
+                # Since address is a special case, we don't add it to failed_fields here
+                # as it would need special handling in verify_specific_fields
             continue
         
-        # Only convert specific field keys that need special handling
-        if key == "type":
-            label = "Property Type"
-        elif key == "listed":
-            label = "Listed Status"
-        else:
-            # Standard conversion for other fields: camelCase -> Spaced Words
-            label_words = []
-            current_word = ""
-            
-            for char in key:
-                if char.isupper():
-                    if current_word:
-                        label_words.append(current_word)
-                    current_word = char
-                else:
-                    current_word += char
-            
-            if current_word:
-                label_words.append(current_word)
-            
-            label = " ".join(word.capitalize() for word in label_words)
+        # Use centralized label mapping function
+        from field_detection import get_form_label
+        label = get_form_label(key, section_name)
         
         # Check if field is in the mapping
         if key not in FIELD_TYPES:
@@ -184,6 +186,18 @@ def process_property_identity(nova: NovaAct, identity_data: dict, section_name: 
         # Check if field exists in the form with subsection information
         if not field_exists(nova, label, section_name, field_type, subsection_name):
             logger.warning(f"Field '{label}' does not exist in the form, skipping")
+            # Add to failed fields for later targeted verification
+            failed_fields.append({
+                "section": section_name,
+                "json_section": "premises",
+                "subsection": "identity",
+                "key": key,
+                "label": label,
+                "expected_value": value,
+                "field_type": field_type,
+                "reason": "field_not_found"
+            })
+            subsection_success = False
             continue
         
         # Check if field should be processed based on dependencies
@@ -229,11 +243,21 @@ def process_property_identity(nova: NovaAct, identity_data: dict, section_name: 
         
         if not field_filled:
             logger.warning(f"Could not fill field '{label}' correctly after {max_attempts} attempts")
+            # Add to failed fields for later targeted verification
+            failed_fields.append({
+                "section": section_name,
+                "json_section": "premises",
+                "subsection": "identity",
+                "key": key,
+                "label": label,
+                "expected_value": value,
+                "field_type": field_type
+            })
             subsection_success = False
     
-    return subsection_success
+    return subsection_success, failed_fields
 
-def process_construction_details(nova: NovaAct, construction_data: dict, section_name: str) -> bool:
+def process_construction_details(nova: NovaAct, construction_data: dict, section_name: str) -> Tuple[bool, List[Dict[str, Any]]]:
     """
     Process the Construction Details subsection fields with immediate verification.
     
@@ -243,34 +267,20 @@ def process_construction_details(nova: NovaAct, construction_data: dict, section
         section_name: Name of the parent section
         
     Returns:
-        bool: True if all fields were processed successfully
+        Tuple[bool, List[Dict[str, Any]]]: 
+            - Boolean success status
+            - List of failed fields with details for targeted verification
     """
     logger.info("Processing Construction Details subsection")
     subsection_name = "Construction Details"
     subsection_success = True
+    failed_fields = []  # Track fields that failed to fill or verify
     
     # Process each field in the construction data
     for key, value in construction_data.items():
-        # Special handling for certain field names to match form labels
-        if key == "rebuildingCost":
-            label = "Rebuilding Cost (£)"
-        else:
-            # Standard conversion for field names: camelCase -> Spaced Words
-            label_words = []
-            current_word = ""
-            
-            for char in key:
-                if char.isupper():
-                    if current_word:
-                        label_words.append(current_word)
-                    current_word = char
-                else:
-                    current_word += char
-            
-            if current_word:
-                label_words.append(current_word)
-            
-            label = " ".join(word.capitalize() for word in label_words)
+        # Use centralized get_form_label function with section context
+        from field_detection import get_form_label
+        label = get_form_label(key, section_name)
         
         # Check if field is in the mapping
         if key not in FIELD_TYPES:
@@ -284,6 +294,18 @@ def process_construction_details(nova: NovaAct, construction_data: dict, section
         # Check if field exists in the form with subsection information
         if not field_exists(nova, label, section_name, field_type, subsection_name):
             logger.warning(f"Field '{label}' does not exist in the form, skipping")
+            # Add to failed fields for later targeted verification
+            failed_fields.append({
+                "section": section_name,
+                "json_section": "premises",
+                "subsection": "construction",
+                "key": key,
+                "label": label,
+                "expected_value": value,
+                "field_type": field_type,
+                "reason": "field_not_found"
+            })
+            subsection_success = False
             continue
         
         # Check if field should be processed based on dependencies
@@ -329,9 +351,19 @@ def process_construction_details(nova: NovaAct, construction_data: dict, section
         
         if not field_filled:
             logger.warning(f"Could not fill field '{label}' correctly after {max_attempts} attempts")
+            # Add to failed fields for later targeted verification
+            failed_fields.append({
+                "section": section_name,
+                "json_section": "premises",
+                "subsection": "construction",
+                "key": key,
+                "label": label,
+                "expected_value": value,
+                "field_type": field_type
+            })
             subsection_success = False
     
-    return subsection_success
+    return subsection_success, failed_fields
 
 # For testing
 if __name__ == "__main__":
@@ -368,12 +400,12 @@ if __name__ == "__main__":
         # Initialize Nova-ACT and navigate to the form
         with NovaAct(starting_page=HARD_FORM_URL) as nova:
             # Try to increase the viewport height while keeping original width
-            try:
-                # Set both width and height to very large values to minimize scrolling
-                # nova.page.set_viewport_size({"width": 2000, "height": 5000})
-                logger.info("Browser viewport size set to 5000x5000")
-            except Exception as e:
-                logger.warning(f"Could not set viewport size: {e}")
+            # try:
+            #     # Set both width and height to very large values to minimize scrolling
+            #     # nova.page.set_viewport_size({"width": 2000, "height": 5000})
+            #     logger.info("Browser viewport size set to 5000x5000")
+            # except Exception as e:
+            #     logger.warning(f"Could not set viewport size: {e}")
             logger.info("Starting Premises Details section test with comprehensive verification")
             
             # Directly navigate to the Premises Details section
@@ -385,12 +417,14 @@ if __name__ == "__main__":
             logger.info("Successfully navigated to Premises Details section")
                 
             # Process Premises Details section
-            result = handle_premises_details(nova, data)
+            success, failed_fields = handle_premises_details(nova, data)
             
-            if result:
+            if success:
                 logger.info("✅ Premises Details section processed successfully")
             else:
                 logger.error("❌ Premises Details section processed with errors")
+                if failed_fields:
+                    logger.warning(f"There were {len(failed_fields)} fields that failed verification")
                 
             # Wait to observe the results
             logger.info("Waiting 5 seconds to observe results...")
@@ -400,4 +434,4 @@ if __name__ == "__main__":
         logger.exception(f"Error in Premises Details handler test: {e}")
         sys.exit(1)
     
-    sys.exit(0 if result else 1)
+    sys.exit(0 if success else 1)

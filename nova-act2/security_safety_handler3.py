@@ -6,8 +6,9 @@ Responsible for filling all fields in the Security & Safety section and verifyin
 import logging
 import sys
 import time
+from typing import List, Dict, Any, Tuple
 from nova_act import NovaAct
-from field_detection import field_exists
+from field_detection import field_exists, get_form_label
 from field_dependencies import should_process_field
 from fill_fields import (
     fill_text_field,
@@ -18,13 +19,13 @@ from fill_fields import (
 from utils_final import load_json_data
 from navigation import click_button, navigate_to_section
 from config import FIELD_TYPES
-from verify import verify_field, verify_section
+from verify3 import verify_field, verify_section
 from error_handler import retry_failed_fields, navigate_to_next_section
 
 # Initialize logger
 logger = logging.getLogger("nova_form_automation")
 
-def handle_security_safety(nova: NovaAct, form_data: dict) -> bool:
+def handle_security_safety(nova: NovaAct, form_data: dict) -> Tuple[bool, List[Dict[str, Any]]]:
     """
     Handle the Security & Safety section of the form with comprehensive verification.
     
@@ -33,7 +34,9 @@ def handle_security_safety(nova: NovaAct, form_data: dict) -> bool:
         form_data: Dictionary containing form data
         
     Returns:
-        bool: True if all fields were processed successfully
+        Tuple[bool, List[Dict[str, Any]]]: 
+            - Boolean success status
+            - List of failed fields with details for targeted verification
     """
     logger.info("Processing Security & Safety section with comprehensive verification")
     section_name = "Security & Safety"
@@ -44,19 +47,19 @@ def handle_security_safety(nova: NovaAct, form_data: dict) -> bool:
         return False
     
     security_data = form_data["security"]
-    success = process_security_fields(nova, security_data, section_name)
+    success, failed_fields = process_security_fields(nova, security_data, section_name)
     
-    # After filling all fields, perform section verification
-    logger.info("Performing comprehensive section verification")
-    failed_fields = verify_section(nova, section_name, form_data)
-    
+    # Only verify fields that failed during initial filling
     if failed_fields:
-        logger.warning(f"Found {len(failed_fields)} fields that failed verification")
+        logger.info(f"Performing targeted verification of {len(failed_fields)} failed Security & Safety fields")
+        still_failed_fields = verify_section(nova, section_name, form_data, specific_fields=failed_fields)
         
-        # Retry filling failed fields
-        retry_failed_fields(nova, failed_fields)
+        if still_failed_fields:
+            logger.warning(f"{len(still_failed_fields)} fields still failed after specialized verification")
+        else:
+            logger.info("All previously failed fields now verify successfully with specialized verification")
     else:
-        logger.info("All fields verified successfully")
+        logger.info("All Security & Safety fields verified successfully during initial filling")
     
     # After filling all fields, try to proceed to next section
     logger.info("Attempting to proceed to next section")
@@ -70,12 +73,12 @@ def handle_security_safety(nova: NovaAct, form_data: dict) -> bool:
         
         if not nav_success:
             logger.error("Failed to navigate to next section")
-            return False
+            return False, failed_fields
     
     logger.info(f"Security & Safety section processed successfully")
-    return True
+    return success, failed_fields
 
-def process_security_fields(nova: NovaAct, security_data: dict, section_name: str) -> bool:
+def process_security_fields(nova: NovaAct, security_data: dict, section_name: str) -> Tuple[bool, List[Dict[str, Any]]]:
     """
     Process the security fields in the Security & Safety section with immediate verification.
     
@@ -85,33 +88,18 @@ def process_security_fields(nova: NovaAct, security_data: dict, section_name: st
         section_name: Name of the current section
         
     Returns:
-        bool: True if all fields were processed successfully
+        Tuple[bool, List[Dict[str, Any]]]: 
+            - Boolean success status
+            - List of failed fields with details for targeted verification
     """
     logger.info("Processing security fields with verification")
     success = True
+    failed_fields = []  # Track fields that failed to fill or verify
     
     # Process each field in the security data
     for key, value in security_data.items():
-        # Special handling for fields with custom labels
-        if key == "cctv":
-            label = "CCTV Installed"
-        else:
-            # Convert field key to a user-friendly label: camelCase -> Spaced Words
-            label_words = []
-            current_word = ""
-            
-            for char in key:
-                if char.isupper():
-                    if current_word:
-                        label_words.append(current_word)
-                    current_word = char
-                else:
-                    current_word += char
-            
-            if current_word:
-                label_words.append(current_word)
-            
-            label = " ".join(word.capitalize() for word in label_words)
+        # Use centralized get_form_label function with section context
+        label = get_form_label(key, section_name)
         
         # Check if field is in the mapping
         if key not in FIELD_TYPES:
@@ -125,6 +113,17 @@ def process_security_fields(nova: NovaAct, security_data: dict, section_name: st
         # Check if field exists in the form
         if not field_exists(nova, label, section_name, field_type):
             logger.warning(f"Field '{label}' does not exist in the form, skipping")
+            # Add to failed fields for later targeted verification
+            failed_fields.append({
+                "section": section_name,
+                "json_section": "security",
+                "key": key,
+                "label": label,
+                "expected_value": value,
+                "field_type": field_type,
+                "reason": "field_not_found"
+            })
+            success = False
             continue
         
         # Check if field should be processed based on dependencies
@@ -177,9 +176,18 @@ def process_security_fields(nova: NovaAct, security_data: dict, section_name: st
             if key in ["cctv", "intruderAlarm", "requireTerrorismCover"]:
                 logger.error(f"Failed to fill a critical checkbox '{label}', dependent fields may not appear")
             
+            # Add to failed fields for later targeted verification
+            failed_fields.append({
+                "section": section_name,
+                "json_section": "security",
+                "key": key,
+                "label": label,
+                "expected_value": value,
+                "field_type": field_type
+            })
             success = False
     
-    return success
+    return success, failed_fields
 
 # For testing
 if __name__ == "__main__":
@@ -193,10 +201,24 @@ if __name__ == "__main__":
     )
     
     try:
-        # Load data
+        # Load data from hard_form_data_actual.json first, fallback to hard_form_data.json
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        parent_dir = os.path.dirname(script_dir)
-        data_file = os.path.join(parent_dir, "hard_form_data.json")
+        data_file = os.path.join(script_dir, "hard_form_data_actual.json")
+        
+        # Check if the file exists in current directory, otherwise try parent directory
+        if not os.path.exists(data_file):
+            logger.info(f"File not found at {data_file}, checking parent directory")
+            parent_dir = os.path.dirname(script_dir)
+            data_file = os.path.join(parent_dir, "hard_form_data_actual.json")
+            
+            # If still not found, fall back to hard_form_data.json
+            # if not os.path.exists(data_file):
+            #     logger.warning("hard_form_data_actual.json not found, falling back to hard_form_data.json")
+            #     data_file = os.path.join(script_dir, "hard_form_data.json")
+            #     if not os.path.exists(data_file):
+            #         data_file = os.path.join(parent_dir, "hard_form_data.json")
+        
+        logger.info(f"Loading data from: {data_file}")
         data = load_json_data(data_file)
         
         # Initialize Nova-ACT and navigate to the form
@@ -215,12 +237,14 @@ if __name__ == "__main__":
                 sys.exit(1)
             
             # Process the section
-            result = handle_security_safety(nova, data)
+            success, failed_fields = handle_security_safety(nova, data)
             
-            if result:
+            if success:
                 logger.info("✅ Security & Safety section processed successfully")
             else:
                 logger.error("❌ Security & Safety section processed with errors")
+                if failed_fields:
+                    logger.warning(f"There were {len(failed_fields)} fields that failed verification")
             
             # Wait to observe results
             time.sleep(5)
@@ -229,4 +253,4 @@ if __name__ == "__main__":
         logger.exception(f"Error in Security & Safety handler test: {e}")
         sys.exit(1)
     
-    sys.exit(0 if result else 1)
+    sys.exit(0 if success else 1)

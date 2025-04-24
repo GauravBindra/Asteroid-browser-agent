@@ -24,10 +24,35 @@ def section_exists(nova, section_name):
         bool: True if section exists, False otherwise
     """
     logger.info(f"Checking if section '{section_name}' exists")
-    nova.act(f"Scroll up till you see 'Commercial Property Insurance Application'.",max_steps=3)
+    # nova.act(f"Scroll up till you see 'Commercia/l Property Insurance Application'.",max_steps=3)
+    query = (
+            f"If you are not at the top then Scroll up till you see 'Commercial Property Insurance Application'. "
+        )
+    # Add try-except block around the scroll command
+    try:
+        nova.act(query, max_steps=5)
+    except Exception as e:
+        logger.warning(f"Initial scroll command failed, retrying: {e}")
+        try:
+            nova.act(query, max_steps=5)
+        except Exception as e2:
+            logger.error(f"Retry of scroll command also failed: {e2}")
+            # Continue anyway - we'll try to find the section even if scrolling fails
+            
     # First, let's try to find it by exact name
     query = f"Is there a section labeled '{section_name}' in this form? Answer true or false."
-    result = nova.act(query, schema=BOOL_SCHEMA)
+    
+    # Add try-except block around the section check
+    try:
+        result = nova.act(query, schema=BOOL_SCHEMA)
+    except Exception as e:
+        logger.warning(f"Section check failed, retrying: {e}")
+        try:
+            result = nova.act(query, schema=BOOL_SCHEMA)
+        except Exception as e2:
+            logger.error(f"Retry of section check also failed: {e2}")
+            # If we can't check if the section exists, assume it doesn't
+            return False
     
     if result.parsed_response:
         logger.info(f"Section '{section_name}' found with exact name match")

@@ -78,9 +78,9 @@ def navigate_to_section(nova, section_name):
     try:
         # Try to navigate to the section using Nova-ACT's understanding
         query = (
-            f"Find and navigate to the section labeled '{section_name}'."
-            f" This might involve clicking on a tab, link, or button."
-            f" Scroll if necessary to find it."
+            f"If you are not at the top then Scroll up till you see 'Commercial Property Insurance Application'. "
+            f"Look at the navigation tabs at the top of the form. "
+            f"Find the tab labeled '{section_name}' and click directly on it. "
         )
         nova.act(query, max_steps=5)
         

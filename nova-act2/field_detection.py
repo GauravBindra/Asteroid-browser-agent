@@ -7,6 +7,7 @@ by their labels in the current form tab.
 """
 
 import logging
+import time
 from nova_act import BOOL_SCHEMA, NovaAct
 
 # Initialize logger
@@ -111,11 +112,6 @@ def field_exists(nova: NovaAct, label: str, current_tab: str, field_type: str = 
                 f"Is there a field '{label}' in {current_tab} section? "
                 f"Answer true or false."
             )
-#         query = (
-#     f"Look at the {current_tab} section of the form carefully. "
-#     f"Is there a field labeled '{label}' or similar visible anywhere? "
-#     f"Consider all input fields, dropdowns, and checkboxes. Answer true or false."
-# )
         result = nova.act(query, schema=BOOL_SCHEMA)
 
         location = f"{subsection} subsection of {current_tab}" if subsection else f"{current_tab} tab"
@@ -145,3 +141,156 @@ def field_exists(nova: NovaAct, label: str, current_tab: str, field_type: str = 
     except Exception as e:
         logger.exception(f"Error checking if field exists: {e}")
         return False
+
+
+def find_field(nova: NovaAct, label: str, section_name: str, field_type: str, 
+  max_attempts: int = 3) -> bool:
+      """
+      Find a field in the form with retry logic.
+      
+      Args:
+          nova: NovaAct instance
+          label: Field label to find
+          section_name: Section containing the field
+          field_type: Type of the field ("text", "dropdown", "checkbox", "date")
+          max_attempts: Maximum number of retry attempts
+          
+      Returns:
+          bool: True if the field was found, False otherwise
+      """
+      logger = logging.getLogger("nova_form_automation")
+      logger.info(f"Finding field '{label}' ({field_type}) in {section_name} section")
+
+      for attempt in range(max_attempts):
+          if attempt > 0:
+              logger.info(f"Retry attempt {attempt + 1}/{max_attempts} to find field '{label}'")
+
+          try:
+              # Check if field exists - if this returns true, the field is already visible
+              # so we don't need additional checks
+              if field_exists(nova, label, section_name, field_type):
+                  logger.info(f"✅ Successfully found field '{label}'")
+                  return True
+
+              # Last attempt already tried with the standard label, no additional fallback needed
+              elif attempt == max_attempts - 1:
+                  logger.info(f"Field '{label}' not found after {max_attempts} attempts")
+                  # No fallback to raw field names
+
+          except Exception as e:
+              logger.warning(f"Error during attempt {attempt + 1} to find field '{label}': {e}")
+              # If last attempt, give up, otherwise continue to next attempt
+              if attempt == max_attempts - 1:
+                  logger.error(f"Failed to find field '{label}' after {max_attempts} attempts")
+                  return False
+
+              # Short pause before retry
+              time.sleep(0.5)
+
+      logger.error(f"Failed to find field '{label}' after {max_attempts} attempts")
+      return False
+
+# Centralized field label mapping
+def get_form_label(key: str, section_name: str = None) -> str:
+    """
+    Get the form label for a JSON field key, taking section context into account.
+    
+    This centralized function handles all special cases and section-specific mappings.
+    
+    Args:
+        key: The JSON field key (e.g., "firstName", "type")
+        section_name: Optional section name for context-specific mappings
+        
+    Returns:
+        str: The corresponding form label to use
+    """
+    # Section-specific mappings
+    section_mappings = {
+        "Contact Details": {
+            "phoneNumber": "Phone Number",
+            "firstName": "First Name",
+            "lastName": "Last Name",
+            "dateOfBirth": "Date of Birth",
+            "jointInsuredPersonName": "Joint Insured Person Name",
+            "jointInsured": "Joint Insured",
+            "numberOfYearsAsLandlord": "Number of Years as Landlord",
+        },
+        "Business Info": {
+            "name": "Business Name",
+            "type": "Business Type",
+            "yearsOfExperience": "Years of Experience",
+            "descriptionOfExperience": "Description of Experience",
+            "ernTaxCode": "ERN Tax Code",
+            "exemptFromERNCode": "Exempt from ERN Code",
+            "websiteUrl": "Website URL",
+        },
+        "Premises Details": {
+            "type": "Property Type",
+            "listed": "Listed Status",
+            "numberOfFlatsInBlock": "Number of Flats in Block",
+            "numberOfFlatsToBeInsured": "Number of Flats to be Insured",
+            "rebuildingCost": "Rebuilding Cost (£)",
+            "yearOfConstruction": "Year of Construction",
+            "hasFlatRoof": "Has Flat Roof",
+            "percentageOfFlatRoof": "Percentage of Flat Roof",
+            "flatRoofLastInspected": "Flat Roof Last Inspected",
+            "isBuildingPurposeBuilt": "Is Building Purpose Built",
+            "isUndergoingBuildingWorks": "Is Undergoing Building Works",
+        },
+        "Security & Safety": {
+            "cctv": "CCTV Installed",
+            "cctvType": "CCTV Type",
+            "cctvCoverage": "CCTV Coverage",
+            "selfContained": "Self Contained",
+            "doorSecurityType": "Door Security Type",
+            "fittedWithSmokeAlarms": "Fitted with Smoke Alarms",
+            "intruderAlarm": "Intruder Alarm",
+            "intruderAlarmType": "Intruder Alarm Type",
+            "requireTerrorismCover": "Require Terrorism Cover",
+            "fireAlarm": "Fire Alarm",
+            "flammableLiquidStored": "Flammable Liquid Stored",
+            "flammableLiquids": "Flammable Liquids",
+        },
+        "Coverage Options": {
+            "sumInsuredLossOfRent": "Sum Insured Loss of Rent",
+            "periodOfIndemnityInMonths": "Period of Indemnity in Months",
+            "propertyOwnersLiabilityAmount": "Property Owners Liability Amount",
+            "terrorism": "Terrorism",
+            "subsidence": "Subsidence",
+            "accidentalDamage": "Accidental Damage",
+        }
+    }
+    
+    # General mappings (fallback if no section-specific mapping exists)
+    general_mappings = {
+        "name": "Name",
+        "type": "Type", 
+        "address": "Address",
+        "city": "City",
+        "postcode": "Postcode",
+    }
+    
+    # First check section-specific mappings if section is provided
+    if section_name and section_name in section_mappings and key in section_mappings[section_name]:
+        return section_mappings[section_name][key]
+    
+    # Then check general mappings
+    if key in general_mappings:
+        return general_mappings[key]
+    
+    # Default: convert camelCase to Title Case
+    label_words = []
+    current_word = ""
+    
+    for char in key:
+        if char.isupper():
+            if current_word:
+                label_words.append(current_word)
+            current_word = char
+        else:
+            current_word += char
+    
+    if current_word:
+        label_words.append(current_word)
+    
+    return " ".join(word.capitalize() for word in label_words)

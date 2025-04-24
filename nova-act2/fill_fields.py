@@ -6,7 +6,8 @@ Provides functions to fill various types of form fields using Nova-ACT.
 import logging
 from nova_act import BOOL_SCHEMA
 from date_helpers import detect_order, convert_date
-from verify import verify_field
+from verify3 import verify_field
+from field_detection import get_form_label
 
 # ─── Field filling functions ────────────────────────────────────────────────────
 
@@ -188,78 +189,115 @@ def select_dropdown_option(nova, label, value):
             return False
 
 
-def fill_address_fields(nova, section_label, address_data):
-    """
-    Fill a complete address block in the form.
+# def fill_address_fields(nova, section_label, address_data):
+#     """
+#     Fill a complete address block in the form.
     
-    This function handles multi-field address entries, filling each component
-    of the address (address lines, city, postcode) in sequence.
+#     This function handles multi-field address entries, filling each component
+#     of the address (address lines, city, postcode) in sequence.
     
-    Args:
-        nova: NovaAct instance
-        section_label: Section containing the address fields (e.g., "Contact Details")
-        address_data: Dictionary containing address components:
-                     {
-                         "addressLine1": "42 Nebula Gardens",
-                         "addressLine2": "Cosmic Quarter",
-                         "addressLine3": "Starlight District",
-                         "city": "Newcastle",
-                         "postcode": "NE1 4XD"
-                     }
+#     Args:
+#         nova: NovaAct instance
+#         section_label: Section containing the address fields (e.g., "Contact Details")
+#         address_data: Dictionary containing address components:
+#                      {
+#                          "addressLine1": "42 Nebula Gardens",
+#                          "addressLine2": "Cosmic Quarter",
+#                          "addressLine3": "Starlight District",
+#                          "city": "Newcastle",
+#                          "postcode": "NE1 4XD"
+#                      }
         
-    Returns:
-        bool: True if all fields filled successfully
-    """
-    logger = logging.getLogger("nova_form_automation")
-    logger.info(f"Filling address fields in {section_label} section")
+#     Returns:
+#         bool: True if all fields filled successfully
+#     """
+#     logger = logging.getLogger("nova_form_automation")
+#     logger.info(f"Filling address fields in {section_label} section")
     
-    # Track success of each field
-    success = True
+#     # Track success of each field
+#     success = True
     
-    # Define field mappings (JSON keys to form labels)
-    field_mappings = {
-        "addressLine1": "Address Line 1",
-        "addressLine2": "Address Line 2",
-        "addressLine3": "Address Line 3",
-        "city": "City",
-        "postcode": "Postcode"
-    }
+#     # Define field mappings (JSON keys to form labels) - prioritize City field first
+#     field_mappings = {
+#         "city": "City",  # Process City field first
+#         "addressLine1": "Address Line 1",
+#         "addressLine2": "Address Line 2",
+#         "addressLine3": "Address Line 3",
+#         "postcode": "Postcode"
+#     }
     
-    try:
-        # Fill each address field in sequence
-        for key, form_label in field_mappings.items():
-            # Skip if this field isn't in the data
-            if key not in address_data:
-                logger.info(f"Skipping {key} - not in address data")
-                continue
+#     try:
+#         # Fill each address field in sequence
+#         for key, form_label in field_mappings.items():
+#             # Skip if this field isn't in the data
+#             if key not in address_data:
+#                 logger.info(f"Skipping {key} - not in address data")
+#                 continue
                 
-            value = address_data[key]
-            if not value:  # Skip empty values
-                logger.info(f"Skipping {key} - empty value")
-                continue
+#             value = address_data[key]
+#             if not value:  # Skip empty values
+#                 logger.info(f"Skipping {key} - empty value")
+#                 continue
                 
-            # Full label might include section context
-            full_label = form_label
+#             # Special handling for City field with multiple detection strategies
+#             if key == "city":
+#                 logger.info(f"Using enhanced detection for City field with value '{value}'")
+                
+#                 # Multiple queries to find and fill the City field
+#                 city_queries = [
+#                     f"Find the text field in address with placeholder 'City' and type '{value}'",
+#                     f"Look for the city input field in the address section and enter '{value}'",
+#                     f"Find the field where city name should be entered and type '{value}'",
+#                     f"Find the text input field after address lines and type '{value}'"
+#                 ]
+                
+#                 city_filled = False
+#                 for i, query in enumerate(city_queries):
+#                     try:
+#                         logger.info(f"City detection attempt {i+1}: {query}")
+#                         nova.act(query, max_steps=4)
+                        
+#                         # Verify if the city value is visible in the form
+#                         verify_query = f"Is the text '{value}' visible in the form? Answer true or false."
+#                         result = nova.act(verify_query, schema=BOOL_SCHEMA)
+                        
+#                         if result.matches_schema and result.parsed_response:
+#                             logger.info(f"✅ Successfully filled City field with '{value}' using query: {query}")
+#                             city_filled = True
+#                             break
+#                         else:
+#                             logger.warning(f"City value not found after attempt {i+1}")
+#                     except Exception as e:
+#                         logger.warning(f"Error in city detection attempt {i+1}: {e}")
+                
+#                 if not city_filled:
+#                     logger.warning(f"Failed to fill City field with '{value}' after multiple attempts")
+#                     success = False
+                
+#                 continue  # Skip the standard field filling code below
             
-            # Fill this field
-            logger.info(f"Filling address field '{full_label}' with '{value}'")
-            field_success = fill_text_field(nova, full_label, value)
+#             # Full label might include section context (for non-City fields)
+#             full_label = form_label
             
-            # Update overall success status
-            if not field_success:
-                logger.warning(f"Failed to fill address field '{full_label}'")
-                success = False
+#             # Fill this field
+#             logger.info(f"Filling address field '{full_label}' with '{value}'")
+#             field_success = fill_text_field(nova, full_label, value)
+            
+#             # Update overall success status
+#             if not field_success:
+#                 logger.warning(f"Failed to fill address field '{full_label}'")
+#                 success = False
         
-        if success:
-            logger.info(f"Successfully filled all address fields in {section_label}")
-        else:
-            logger.warning(f"Some address fields in {section_label} could not be filled")
+#         if success:
+#             logger.info(f"Successfully filled all address fields in {section_label}")
+#         else:
+#             logger.warning(f"Some address fields in {section_label} could not be filled")
             
-        return success
+#         return success
             
-    except Exception as e:
-        logger.exception(f"Error filling address fields in {section_label}: {e}")
-        return False
+#     except Exception as e:
+#         logger.exception(f"Error filling address fields in {section_label}: {e}")
+#         return False
 
 # def fill_address_fields(nova, section_label, address_data):
 #     """
@@ -341,18 +379,18 @@ def fill_address_fields(nova, section_label, address_data):
     # Track success of each field
     success = True
     
-    # Define field mappings (JSON keys to form labels)
-    field_mappings = {
-        "addressLine1": "Address Line 1",
-        "addressLine2": "Address Line 2",
-        "addressLine3": "Address Line 3",
-        "city": "City",
-        "postcode": "Postcode"
-    }
+    # Define field order with City first (only the order is important)
+    field_order = [
+        "city",  # Process City field first
+        "addressLine1",
+        "addressLine2",
+        "addressLine3", 
+        "postcode"
+    ]
     
     try:
         # Fill each address field in sequence
-        for key, form_label in field_mappings.items():
+        for key in field_order:
             # Skip if this field isn't in the data
             if key not in address_data:
                 logger.info(f"Skipping {key} - not in address data")
@@ -362,7 +400,60 @@ def fill_address_fields(nova, section_label, address_data):
             if not value:  # Skip empty values
                 logger.info(f"Skipping {key} - empty value")
                 continue
+                
+            # Get the form label using the centralized function
+            form_label = get_form_label(key, section_label)
             
+            # Special handling for City and Postcode fields with multiple detection strategies
+            if key in ["city", "postcode"]:
+                field_type = "City" if key == "city" else "Postcode"
+                logger.info(f"Using enhanced detection for {field_type} field with value '{value}'")
+                
+                # Multiple queries to find and fill the field
+                queries = []
+                
+                if key == "city":
+                    queries = [
+                        f"Find the text field in address with placeholder 'City' and type '{value}'",
+                        f"Look for the city input field in the address section and enter '{value}'",
+                        f"Find the field where city name should be entered and type '{value}'",
+                        f"Find the text input field after address lines and type '{value}'"
+                    ]
+                else:  # postcode
+                    queries = [
+                        f"Find the text field in address with placeholder 'Postcode' and type '{value}'",
+                        f"Look for the text field with placeholder 'Postcode' to the right of City and enter '{value}'",
+                        f"Find the field where Postcode should be entered and type '{value}'",
+                        f"Find the empty text field in Property Address and type '{value}'",
+                        f"Find the last text field in the Property Address section and type '{value}'"
+                    ]
+                
+                field_filled = False
+                for i, query in enumerate(queries):
+                    try:
+                        logger.info(f"{field_type} detection attempt {i+1}: {query}")
+                        nova.act(query, max_steps=4)
+                        
+                        # Verify if the value is visible in the form
+                        verify_query = f"Is the text '{value}' visible in the form? Answer true or false."
+                        result = nova.act(verify_query, schema=BOOL_SCHEMA)
+                        
+                        if result.matches_schema and result.parsed_response:
+                            logger.info(f"✅ Successfully filled {field_type} field with '{value}' using query: {query}")
+                            field_filled = True  # For both inner and outer verification loops
+                            break
+                        else:
+                            logger.warning(f"{field_type} value not found after attempt {i+1}")
+                    except Exception as e:
+                        logger.warning(f"Error in {field_type} detection attempt {i+1}: {e}")
+                
+                if not field_filled:
+                    logger.warning(f"Failed to fill {field_type} field with '{value}' after multiple attempts")
+                    success = False
+                
+                continue  # Skip the standard field handling code below
+            
+            # Standard handling for non-City fields
             # Check if field exists in the form
             query = (
                 f"Is there a placeholder '{form_label}' in an empty Address field textbox? "

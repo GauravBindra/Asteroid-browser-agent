@@ -13,7 +13,7 @@ from fill_fields import (
     select_dropdown_option,
     fill_checkbox
 )
-from verify import verify_field
+from verify3 import verify_field
 from navigation import navigate_to_section
 from config import FORM_SECTIONS
 

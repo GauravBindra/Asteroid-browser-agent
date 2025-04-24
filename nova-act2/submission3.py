@@ -7,8 +7,9 @@ Responsible for handling the Coverage Options section and final submission of th
 import logging
 import time
 import os
+from typing import List, Dict, Any, Tuple
 from nova_act import NovaAct, BOOL_SCHEMA
-from field_detection import field_exists
+from field_detection import field_exists, get_form_label
 from field_dependencies import should_process_field
 from fill_fields import (
     fill_text_field,
@@ -18,7 +19,7 @@ from fill_fields import (
 )
 from navigation import click_button, navigate_to_section
 from config import FIELD_TYPES
-from verify import verify_field, verify_section
+from verify3 import verify_field, verify_section
 from error_handler import retry_failed_fields, navigate_to_next_section
 
 # Initialize logger
@@ -60,7 +61,7 @@ def handle_coverage_options(nova: NovaAct, form_data: dict) -> bool:
         logger.info("No coverage data found or no fields visible - proceeding directly to submission")
         
         # Try to click Submit button
-        submit_success = click_button(nova, "Submit")
+        submit_success = click_button(nova, "Submit Application")
         if not submit_success:
             logger.warning("Failed to click Submit button, trying Next button")
             return click_button(nova, "Next")
@@ -72,22 +73,8 @@ def handle_coverage_options(nova: NovaAct, form_data: dict) -> bool:
     
     # Process each field in the coverage data
     for key, value in coverage_data.items():
-        # Standard conversion for fields: camelCase -> Spaced Words
-        label_words = []
-        current_word = ""
-        
-        for char in key:
-            if char.isupper():
-                if current_word:
-                    label_words.append(current_word)
-                current_word = char
-            else:
-                current_word += char
-        
-        if current_word:
-            label_words.append(current_word)
-        
-        label = " ".join(word.capitalize() for word in label_words)
+        # Use centralized get_form_label function with section context
+        label = get_form_label(key, section_name)
         
         # Check if field is in the mapping
         if key not in FIELD_TYPES:

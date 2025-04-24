@@ -36,13 +36,13 @@ def verify_field(nova: NovaAct, label: str, expected_value, field_type: str = "t
         query = f"Is the checkbox labeled '{label}' {state}? Answer true or false."
     elif field_type == "dropdown":
         logger.info(f"Verifying dropdown '{label}' has '{expected_value}' selected")
-        query = f"Does the dropdown field labeled '{label}' have the option '{expected_value}' selected? Answer true or false."
+        query = f"Does the '{label}' dropdown have the value '{expected_value}'? Answer true or false."
     elif field_type == "date":
         logger.info(f"Verifying date field '{label}' contains '{expected_value}'")
-        query = f"Does the date field labeled '{label}' contain the date '{expected_value}'? Answer true or false."
+        query = f"Does the '{label}' date field have the date '{expected_value}'? Answer true or false."
     else:  # Default text field
         logger.info(f"Verifying text field '{label}' contains '{expected_value}'")
-        query = f"Does the field labeled '{label}' contain the value '{expected_value}'? Answer true or false."
+        query = f"Does the '{label}' text field have the value '{expected_value}'? Answer true or false."
     
     try:
         result = nova.act(query, schema=BOOL_SCHEMA)
